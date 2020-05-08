@@ -2,7 +2,7 @@
 
 ## Rule Details
 
-This rule aims to prevent `test.only` from being added to source control.  It's fine to use `.only` locally in development, but this rule aims to prevent it from getting accidentally committed.
+This rule aims to prevent `test.only` from being added to source control.  It's fine to use this locally in development, but this rule aims to prevent it from getting accidentally committed.
 
 Examples of **incorrect** code for this rule:
 

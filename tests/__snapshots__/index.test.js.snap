@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should have all the rules 1`] = `
+Object {
+  "no-debug": Object {
+    "create": [Function],
+    "meta": Object {
+      "docs": Object {
+        "category": "Mistake Prevention",
+        "description": "Don't allow debug() to be committed to the repository. ",
+        "recommended": true,
+      },
+      "fixable": null,
+      "schema": Array [],
+    },
+  },
+  "no-only": Object {
+    "create": [Function],
+    "meta": Object {
+      "docs": Object {
+        "category": "Mistake Prevention",
+        "description": "Don't allow test.only to be added to the repository",
+        "recommended": false,
+      },
+      "fixable": null,
+      "schema": Array [],
+    },
+  },
+  "no-skip": Object {
+    "create": [Function],
+    "meta": Object {
+      "docs": Object {
+        "category": "Mistake Prevention",
+        "description": "Don't allow test.skip to be added to the repository",
+        "recommended": true,
+      },
+      "fixable": null,
+      "schema": Array [],
+    },
+  },
+}
+`;
