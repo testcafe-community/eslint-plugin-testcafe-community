@@ -20,10 +20,14 @@
         "testcafe"
     ],
     "scripts": {
-        "test": "jest"
+        "test": "jest",
+        "generate-readme-table": "node build/generate-readme-table.js"
     },
     "devDependencies": {
         "eslint": "^6.8.0",
         "jest": "^26.0.1"
+    },
+    "dependencies": {
+        "requireindex": "^1.2.0"
     }
 }

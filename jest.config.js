@@ -10,5 +10,5 @@ module.exports = {
     }
   },
   testPathIgnorePatterns: ["<rootDir>/tests/fixtures/"],
-  collectCoverageFrom: ["lib/**/*.js", "!**/node_modules/**"]
+  collectCoverageFrom: ["lib/**/*.js", "index.js", "!**/node_modules/**"]
 };
