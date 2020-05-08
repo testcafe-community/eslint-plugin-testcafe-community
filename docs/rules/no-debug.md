@@ -1,10 +1,8 @@
 # Don&#39;t allow debug() to be committed to the repository.  (no-debug)
 
-Please describe the origin of the rule here.
-
 ## Rule Details
 
-This rule aims to prevent `t.debug()` being added to source control.
+This rule aims to prevent `t.debug()` from being added to source control.
 
 Examples of **incorrect** code for this rule:
 
