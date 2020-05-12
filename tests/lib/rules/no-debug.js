@@ -18,7 +18,8 @@ var rule = require("../../../lib/rules/no-debug"),
 //------------------------------------------------------------------------------
 
 
-var ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
+let ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
+let message = 'Do not use the `.debug` action.';
 ruleTester.run("no-debug", rule, {
 
     valid: [
@@ -32,7 +33,7 @@ ruleTester.run("no-debug", rule, {
         {
             code: "t.debug()",
             errors: [{
-                message: "Do not use debug"
+                message
             }]
         },
         {
@@ -44,7 +45,7 @@ ruleTester.run("no-debug", rule, {
             })
             `,
             errors: [{
-                message: "Do not use debug"
+                message
             }]
 
         },
@@ -56,7 +57,7 @@ ruleTester.run("no-debug", rule, {
             })
             `,
             errors: [{
-                message: "Do not use debug"
+                message
             }]
 
         },
@@ -69,7 +70,7 @@ ruleTester.run("no-debug", rule, {
             })
             `,
             errors: [{
-                message: "Do not use debug"
+                message
             }]
         }
     ]
