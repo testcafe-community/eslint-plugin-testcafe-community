@@ -17,12 +17,14 @@ var rule = require("../../../lib/rules/no-skip"),
 // Tests
 //------------------------------------------------------------------------------
 
-var ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
+let ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
+let message = 'Do not use the `.skip` hook.';
 ruleTester.run("no-skip", rule, {
 
     valid: [
         `test("foo", () => { })`,
-        "fixture`foo`"
+        "fixture`foo`",
+        "fixture`foo`.page",
     ],
 
     invalid: [
@@ -31,21 +33,43 @@ ruleTester.run("no-skip", rule, {
                 await t.click(Selector(".foo"))
             })`,
             errors: [{
-                message: "Do not use skip",
+                message,
             }]
         },
-
+        {
+            code: `
+            fixture \`foo\`
+                .page("http://www.google.com")
+                .skip`,
+            errors: [{
+                message,
+            }]
+        },
+        {
+            code: `
+            fixture \`foo\`
+                .page\`http://www.google.com\`
+                .skip`,
+            errors: [{
+                message,
+            }]
+        },
         {
             code: "fixture.skip`foo`",
             errors: [{
-                message: "Do not use skip",
+                message,
+            }]
+        }, {
+            code: "fixture`foo`.skip",
+            errors: [{
+                message,
             }]
         },
 
         {
             code: "fixture.skip(`foo`)",
             errors: [{
-                message: "Do not use skip",
+                message,
             }]
         }
     ]

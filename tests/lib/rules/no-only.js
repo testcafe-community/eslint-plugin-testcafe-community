@@ -17,7 +17,9 @@ var rule = require("../../../lib/rules/no-only"),
 // Tests
 //------------------------------------------------------------------------------
 
-var ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
+
+let ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
+let message = "Do not use the `.only` hook.";
 ruleTester.run("no-only", rule, {
 
     valid: [
@@ -31,8 +33,38 @@ ruleTester.run("no-only", rule, {
                 await t.click(Selector(".foo"))
             })`,
             errors: [{
-                message: "Do not use only",
+                message,
             }]
-        }
+        },
+
+        {
+            code: `
+            fixture \`foo\`
+                .page("http://www.google.com")
+                .only`,
+            errors: [{
+                message,
+            }]
+        },
+        {
+            code: `
+            fixture \`foo\`
+                .page\`http://www.google.com\`
+                .only`,
+            errors: [{
+                message,
+            }]
+        },
+        {
+            code: "fixture.only`foo`",
+            errors: [{
+                message,
+            }]
+        }, {
+            code: "fixture`foo`.only",
+            errors: [{
+                message,
+            }]
+        },
     ]
 });
