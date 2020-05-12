@@ -7,7 +7,7 @@ Object {
     "meta": Object {
       "docs": Object {
         "category": "Mistake Prevention",
-        "description": "Don't allow debug() to be committed to the repository. ",
+        "description": "Don't allow \`t.debug()\` to be committed to the repository. ",
         "recommended": true,
       },
       "fixable": null,
@@ -19,8 +19,8 @@ Object {
     "meta": Object {
       "docs": Object {
         "category": "Mistake Prevention",
-        "description": "Don't allow test.only to be added to the repository",
-        "recommended": false,
+        "description": "Don't allow \`test.only\` to be added to the repository",
+        "recommended": true,
       },
       "fixable": null,
       "schema": Array [],
@@ -31,7 +31,7 @@ Object {
     "meta": Object {
       "docs": Object {
         "category": "Mistake Prevention",
-        "description": "Don't allow test.skip to be added to the repository",
+        "description": "Don't allow \`test.skip\` or \`fixture.skip\` to be added to the repository",
         "recommended": true,
       },
       "fixable": null,
