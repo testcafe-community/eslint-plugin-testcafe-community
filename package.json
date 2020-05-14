@@ -1,18 +1,18 @@
 {
     "name": "eslint-plugin-testcafe-community",
-    "version": "0.2.1",
+    "version": "1.0.1-semantically-released",
     "description": "Eslint rules for testcafe, from the testcafe community",
     "main": "index.js",
     "repository": {
         "type": "git",
-        "url": "git://github.com/testcafe-community/eslint-plugin-testcafe-community-community"
+        "url": "git://github.com/testcafe-community/eslint-plugin-testcafe-community"
     },
     "author": "Ben Monro <ben.monro@gmail.com>",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/testcafe-community/eslint-plugin-testcafe-community-community/issues"
+        "url": "https://github.com/testcafe-community/eslint-plugin-testcafe-community/issues"
     },
-    "homepage": "https://github.com/testcafe-community/eslint-plugin-testcafe-community-community",
+    "homepage": "https://github.com/testcafe-community/eslint-plugin-testcafe-community",
     "keywords": [
         "eslint",
         "eslintplugin",
@@ -25,7 +25,8 @@
     },
     "devDependencies": {
         "eslint": "^6.8.0",
-        "jest": "^26.0.1"
+        "jest": "^26.0.1",
+        "semantic-release": "^17.0.7"
     },
     "dependencies": {
         "requireindex": "^1.2.0"
