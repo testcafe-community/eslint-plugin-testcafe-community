@@ -33,9 +33,29 @@ Object {
         "category": "Mistake Prevention",
         "description": "Don't allow \`test.skip\` or \`fixture.skip\` to be added to the repository",
         "recommended": true,
+        "recommendedLogLevel": "warn",
       },
       "fixable": null,
       "schema": Array [],
+    },
+  },
+}
+`;
+
+exports[`should have all the rules 2`] = `
+Object {
+  "recommended": Object {
+    "globals": Object {
+      "fixture": false,
+      "test": false,
+    },
+    "plugins": Array [
+      "testcafe-community",
+    ],
+    "rules": Object {
+      "testcafe-community/no-debug": "error",
+      "testcafe-community/no-only": "error",
+      "testcafe-community/no-skip": "warn",
     },
   },
 }

@@ -12,7 +12,7 @@ module.exports.generateRecommendedConfig = rules => {
     return Object.entries(rules).reduce(
         (memo, [name, rule]) =>
             rule.meta.docs.recommended
-                ? { ...memo, [`testcafe-community/${name}`]: "error" }
+                ? { ...memo, [`testcafe-community/${name}`]: rule.meta.docs.recommendedLogLevel || "error" }
                 : memo,
         {}
     );
