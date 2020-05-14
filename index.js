@@ -12,7 +12,7 @@ module.exports.generateRecommendedConfig = rules => {
     return Object.entries(rules).reduce(
         (memo, [name, rule]) =>
             rule.meta.docs.recommended
-                ? { ...memo, [`testcafe/${name}`]: "error" }
+                ? { ...memo, [`testcafe-community/${name}`]: "error" }
                 : memo,
         {}
     );
@@ -25,7 +25,7 @@ module.exports.configs = {
             fixture: false,
             test: false
         },
-        plugins: ["testcafe"],
+        plugins: ["testcafe-community"],
         rules: module.exports.generateRecommendedConfig(module.exports.rules)
     }
 

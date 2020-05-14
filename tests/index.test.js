@@ -10,5 +10,5 @@ it("should have a recommended config with recommended rules", () => {
       good: { meta: { docs: { recommended: true } } },
       bad: { meta: { docs: { recommended: false } } }
     })
-  ).toEqual({ "testcafe/good": "error" });
+  ).toEqual({ "testcafe-community/good": "error" });
 });
