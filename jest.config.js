@@ -1,6 +1,7 @@
 module.exports = {
-  testMatch: ["**/tests/**/*.js"],
+  testMatch: ["**/tests/**/*.ts"],
   collectCoverage: true,
+  preset: "ts-jest", 
   coverageThreshold: {
     global: {
       branches: 100,
@@ -10,5 +11,5 @@ module.exports = {
     }
   },
   testPathIgnorePatterns: ["<rootDir>/tests/fixtures/"],
-  collectCoverageFrom: ["lib/**/*.js", "index.js", "!**/node_modules/**"]
+  collectCoverageFrom: ["lib/**/*.ts", "index.ts", "!**/node_modules/**"]
 };
