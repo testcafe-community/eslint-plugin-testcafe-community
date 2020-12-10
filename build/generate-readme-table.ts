@@ -2,7 +2,6 @@
 
 const fs = require("fs");
 const path = require("path");
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'rules'.
 const rules = require("..").rules;
 
 const README_LOCATION = path.resolve(__dirname, "..", "README.md");
