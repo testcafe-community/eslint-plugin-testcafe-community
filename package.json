@@ -39,5 +39,9 @@
         "@types/eslint": "^7.2.2",
         "@typescript-eslint/experimental-utils": "^4.0.1",
         "requireindex": "^1.2.0"
-    }
+    },
+    "release":{
+        "branches":["master", {"name":"feature/to-typescript", "prerelease":true}
+        
+    ]}
 }
