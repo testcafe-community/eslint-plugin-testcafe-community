@@ -2,20 +2,26 @@
  * @fileoverview Don't allow test.only to be added to the repository
  * @author Ben Monro
  */
-"use strict";
+
+import { createRule } from "../create-rule";
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-module.exports = {
+export default createRule({
+    defaultOptions:[],
+    name: __filename,
     meta: {
+        messages:{
+            noOnly: 'Do not use the `.only` hook.',
+        },
+        type:"problem",
         docs: {
             description: "Don't allow `test.only` to be added to the repository",
-            category: "Mistake Prevention",
-            recommended: true
+            category: "Best Practices",
+            recommended: "error"
         },
-        fixable: null,
         schema: []
     },
 
@@ -23,14 +29,14 @@ module.exports = {
 
         return {
 
-            "MemberExpression[property.name='only']"(node) {
+            "MemberExpression[property.name='only']"(node: any) {
                 context.report({
                     node: node.property,
-                    message: 'Do not use the `.only` hook.'
+                    messageId: "noOnly"
                 });
             },
 
 
         };
     }
-};
+});

@@ -4,34 +4,38 @@
  */
 "use strict";
 
+import { createRule } from "../create-rule";
+
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-module.exports = {
+export default createRule({
+    name: __filename,
+    defaultOptions:[],
     meta: {
+        messages:{
+            noSkip: 'Do not use the `.skip` hook.'
+        },
+        type: "suggestion",
         docs: {
             description: "Don't allow `test.skip` or `fixture.skip` to be added to the repository",
-            category: "Mistake Prevention",
-            recommended: true,
-            recommendedLogLevel: "warn"
+            category: "Best Practices",
+            recommended: "warn",
         },
-        fixable: null,
         schema: []
     },
 
     create: function (context) {
-
         return {
-
-            "MemberExpression[property.name='skip']"(node) {
+            "MemberExpression[property.name='skip']"(node: any) {
                 context.report({
                     node: node.property,
-                    message: 'Do not use the `.skip` hook.'
+                    messageId: 'noSkip'
                 });
             },
 
 
         };
     }
-};
+});

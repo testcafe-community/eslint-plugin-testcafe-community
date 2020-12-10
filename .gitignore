@@ -2,3 +2,5 @@ node_modules
 .ideacoverage
 .idea
 coverage
+dist
+yarn.lock

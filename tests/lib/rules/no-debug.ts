@@ -7,18 +7,18 @@
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
+import rule from "../../../lib/rules/no-debug";
+import {RuleTester} from 'eslint';
 
-var rule = require("../../../lib/rules/no-debug"),
 
-    RuleTester = require("eslint").RuleTester;
-
+import resolveFrom from 'resolve-from';
+import { TSESLint } from '@typescript-eslint/experimental-utils';
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
+let ruleTester = new TSESLint.RuleTester({     parser: resolveFrom(require.resolve('eslint'), 'espree'), parserOptions: { ecmaVersion: 8 } });
 
-
-let ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
 let message = 'Do not use the `.debug` action.';
 ruleTester.run("no-debug", rule, {
 
@@ -33,7 +33,7 @@ ruleTester.run("no-debug", rule, {
         {
             code: "t.debug()",
             errors: [{
-                message
+                messageId: "noDebugMessage"
             }]
         },
         {
@@ -45,7 +45,7 @@ ruleTester.run("no-debug", rule, {
             })
             `,
             errors: [{
-                message
+                messageId: "noDebugMessage"
             }]
 
         },
@@ -57,7 +57,7 @@ ruleTester.run("no-debug", rule, {
             })
             `,
             errors: [{
-                message
+                messageId: "noDebugMessage"
             }]
 
         },
@@ -70,7 +70,7 @@ ruleTester.run("no-debug", rule, {
             })
             `,
             errors: [{
-                message
+                messageId: "noDebugMessage"
             }]
         }
     ]

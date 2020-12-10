@@ -7,18 +7,18 @@
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
+import rule from "../../../lib/rules/no-skip"
+import {RuleTester} from 'eslint';
 
-var rule = require("../../../lib/rules/no-skip"),
-
-    RuleTester = require("eslint").RuleTester;
-
+import resolveFrom from 'resolve-from';
+import { TSESLint } from '@typescript-eslint/experimental-utils';
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-let ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
-let message = 'Do not use the `.skip` hook.';
+let ruleTester = new TSESLint.RuleTester({     parser: resolveFrom(require.resolve('eslint'), 'espree'), parserOptions: { ecmaVersion: 8 } });
+
 ruleTester.run("no-skip", rule, {
 
     valid: [
@@ -33,7 +33,7 @@ ruleTester.run("no-skip", rule, {
                 await t.click(Selector(".foo"))
             })`,
             errors: [{
-                message,
+                messageId: "noSkip",
             }]
         },
         {
@@ -42,7 +42,7 @@ ruleTester.run("no-skip", rule, {
                 .page("http://www.google.com")
                 .skip`,
             errors: [{
-                message,
+                messageId: "noSkip",
             }]
         },
         {
@@ -51,25 +51,25 @@ ruleTester.run("no-skip", rule, {
                 .page\`http://www.google.com\`
                 .skip`,
             errors: [{
-                message,
+                messageId: "noSkip",
             }]
         },
         {
             code: "fixture.skip`foo`",
             errors: [{
-                message,
+                messageId: "noSkip",
             }]
         }, {
             code: "fixture`foo`.skip",
             errors: [{
-                message,
+                messageId: "noSkip",
             }]
         },
 
         {
             code: "fixture.skip(`foo`)",
             errors: [{
-                message,
+                messageId: "noSkip",
             }]
         }
     ]

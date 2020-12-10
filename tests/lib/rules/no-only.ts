@@ -7,19 +7,17 @@
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
-
-var rule = require("../../../lib/rules/no-only"),
-
-    RuleTester = require("eslint").RuleTester;
-
+import rule from "../../../lib/rules/no-only";
+import resolveFrom from 'resolve-from';
+import { TSESLint } from '@typescript-eslint/experimental-utils';
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-
-let ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 8 } });
-let message = "Do not use the `.only` hook.";
+let ruleTester = new TSESLint.RuleTester({ 
+     parser: resolveFrom(require.resolve('eslint'), 'espree'),
+parserOptions: { ecmaVersion: 8 } });
 ruleTester.run("no-only", rule, {
 
     valid: [
@@ -33,7 +31,7 @@ ruleTester.run("no-only", rule, {
                 await t.click(Selector(".foo"))
             })`,
             errors: [{
-                message,
+                messageId:"noOnly",
             }]
         },
 
@@ -43,7 +41,7 @@ ruleTester.run("no-only", rule, {
                 .page("http://www.google.com")
                 .only`,
             errors: [{
-                message,
+                messageId:"noOnly",
             }]
         },
         {
@@ -52,18 +50,18 @@ ruleTester.run("no-only", rule, {
                 .page\`http://www.google.com\`
                 .only`,
             errors: [{
-                message,
+                messageId: "noOnly",
             }]
         },
         {
             code: "fixture.only`foo`",
             errors: [{
-                message,
+                messageId: "noOnly",
             }]
         }, {
             code: "fixture`foo`.only",
             errors: [{
-                message,
+                messageId: "noOnly",
             }]
         },
     ]
