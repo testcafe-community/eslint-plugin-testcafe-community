@@ -13,12 +13,12 @@ it.each(Object.keys(rules))("%s should export required fields", (ruleName) => {
   expect(rule.meta.docs.description).not.toBeEmpty();
 });
 it("should have a recommended config with recommended rules", () => {
-  expect(generateRecommendedConfig()).toMatchInlineSnapshot(`
-    Object {
+  expect(generateRecommendedConfig()).toEqual({
+    "testcafe-community/expectExpect": "error",
       "testcafe-community/noDebug": "error",
       "testcafe-community/noIdenticalTitle": "error",
       "testcafe-community/noOnly": "error",
       "testcafe-community/noSkip": "warn",
     }
-  `);
+  );
 });
