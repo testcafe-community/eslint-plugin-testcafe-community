@@ -8,6 +8,16 @@
         "url": "git://github.com/testcafe-community/eslint-plugin-testcafe-community"
     },
     "author": "Ben Monro <ben.monro@gmail.com>",
+    "contributors": [
+        {
+            "name": "Mikhail Losev",
+            "email": "miherlosev@mail.ru"
+        },
+        {
+            "name": "codejedi365",
+            "email": "codejedi365@gmail.com"
+        }
+    ],
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/testcafe-community/eslint-plugin-testcafe-community/issues"
@@ -17,6 +27,8 @@
         "eslint",
         "eslintplugin",
         "eslint-plugin",
+        "rules",
+        "test",
         "testcafe"
     ],
     "scripts": {
