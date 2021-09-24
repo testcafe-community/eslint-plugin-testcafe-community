@@ -3,6 +3,10 @@
     "version": "1.0.1-semantically-released",
     "description": "Eslint rules for testcafe, from the testcafe community",
     "main": "dist/index.js",
+    "files": [
+        "dist/**",
+        "docs/**"
+    ],
     "repository": {
         "type": "git",
         "url": "git://github.com/testcafe-community/eslint-plugin-testcafe-community"
