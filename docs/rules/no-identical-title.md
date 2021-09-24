@@ -7,14 +7,14 @@ This rule aims to prevent duplicate test names to exist.  All tests should have 
 Examples of **incorrect** code for this rule:
 
 ```js
-    test("should see a button to click", (t) => {
-        t.expect(Selector("foo").value).toEqual("Click Me!")
+    test("should see a button to click", async (t) => {
+        await t.expect(Selector("foo").value).toEqual("Click Me!")
     })
 
     // Duplicate title
     test("should see a button to click", async (t) => {
         await t.click(Selector("foo"))
-        t.expect(Selector("foo").value).toEqual("Clicked")
+        await t.expect(Selector("foo").value).toEqual("Clicked")
     })
 ```
 
@@ -22,12 +22,12 @@ Examples of **correct** code for this rule:
 
 ```js
     // 2 different titles
-    test("should see a button to click", (t) => {
-        t.expect(Selector("foo").value).toEqual("Click Me!")
+    test("should see a button to click", async (t) => {
+        await t.expect(Selector("foo").value).toEqual("Click Me!")
     })
     test("should see button text change after clicked", async (t) => {
         await t.click(Selector("foo"))
-        t.expect(Selector("foo").value).toEqual("Clicked")
+        await t.expect(Selector("foo").value).toEqual("Clicked")
     })
 ```
 

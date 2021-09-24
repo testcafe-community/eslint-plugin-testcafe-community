@@ -24,7 +24,7 @@ Examples of **correct** code for this rule:
     test('should change text to clicked', async (t) => {
         const text = Selector("bar")
         await t.click(Selector("foo"))
-        t.expect(text).toEqual("button clicked") // Makes an assertion
+        await t.expect(text).toEqual("button clicked") // Makes an assertion
     })
 ```
 
