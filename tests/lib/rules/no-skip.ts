@@ -6,8 +6,6 @@
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
-import { RuleTester } from "eslint";
-
 import resolveFrom from "resolve-from";
 import { TSESLint } from "@typescript-eslint/experimental-utils";
 import rule from "../../../lib/rules/no-skip";

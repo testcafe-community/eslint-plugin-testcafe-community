@@ -1,7 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const { rules } = require("../lib");
-const { repository } = require("../package.json");
+import fs from "fs";
+import path from "path";
+import { rules } from "../lib";
+import { repository } from "../package.json";
 
 const repoURL = repository.url.replace(/^git:\/\//, "");
 

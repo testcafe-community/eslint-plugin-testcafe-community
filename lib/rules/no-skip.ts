@@ -3,6 +3,7 @@
  * @author Ben Monro
  */
 
+import { MemberExpression } from "@typescript-eslint/types/dist/ast-spec";
 import { createRule } from "../create-rule";
 
 //------------------------------------------------------------------------------
@@ -28,7 +29,9 @@ export default createRule({
 
     create(context) {
         return {
-            "MemberExpression[property.name='skip']": function (node: any) {
+            "MemberExpression[property.name='skip']": (
+                node: MemberExpression
+            ) => {
                 context.report({
                     node: node.property,
                     messageId: "noSkip"

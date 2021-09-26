@@ -1,11 +1,13 @@
 import { parse as parsePath } from "path";
 import { ESLintUtils } from "@typescript-eslint/experimental-utils";
-import { version } from "../package.json";
+import { repository, version } from "../package.json";
 
-const REPO_URL =
-    "https://github.com/testcafe-community/eslint-plugin-testcafe-community";
+const REPO_URL = repository.url
+    .replace(/git:\/\//, "https://")
+    .replace(/\.git$/, "");
 
 export const createRule = ESLintUtils.RuleCreator((name) => {
     const ruleName = parsePath(name).name;
-    return `${REPO_URL}/blob/tree/master/docs/rules/${ruleName}.md`;
+    return `${REPO_URL}/blob/v${version}/docs/rules/${ruleName}.md`;
 });
+export default createRule;

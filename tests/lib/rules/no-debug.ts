@@ -6,8 +6,6 @@
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
-import { RuleTester } from "eslint";
-
 import resolveFrom from "resolve-from";
 import { TSESLint } from "@typescript-eslint/experimental-utils";
 import rule from "../../../lib/rules/no-debug";
@@ -20,7 +18,6 @@ const ruleTester = new TSESLint.RuleTester({
     parserOptions: { ecmaVersion: 8 }
 });
 
-const message = "Do not use the `.debug` action.";
 ruleTester.run("no-debug", rule, {
     valid: [
         `t.click()`,

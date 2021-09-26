@@ -2,8 +2,19 @@
  * @fileoverview Don't allow debug() to be committed to the repository.
  * @author Ben Monro
  */
-
+import {
+    CallExpression,
+    LeftHandSideExpression,
+    MemberExpression,
+    MetaProperty
+} from "@typescript-eslint/types/dist/ast-spec";
 import { createRule } from "../create-rule";
+
+function hasPropertyAttr(
+    callee: LeftHandSideExpression
+): callee is MemberExpression | MetaProperty {
+    return "property" in callee;
+}
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -28,13 +39,15 @@ export default createRule({
 
     create(context) {
         return {
-            "CallExpression[callee.property.name='debug']": function (
-                node: any
-            ) {
-                context.report({
-                    node: node.callee.property,
-                    messageId: "noDebugMessage"
-                });
+            "CallExpression[callee.property.name='debug']": (
+                node: CallExpression
+            ) => {
+                if (hasPropertyAttr(node.callee)) {
+                    context.report({
+                        node: node.callee.property,
+                        messageId: "noDebugMessage"
+                    });
+                }
             }
         };
     }
