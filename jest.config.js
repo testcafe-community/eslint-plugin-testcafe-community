@@ -8,6 +8,10 @@ module.exports = {
       functions: 100,
       lines: 90,
       statements: 90
+    },
+    "./lib/rules/expect-expect.ts": { // allow error handling
+      lines: -3,
+      statements: -5
     }
   },
   testPathIgnorePatterns: ["<rootDir>/tests/fixtures/"],
