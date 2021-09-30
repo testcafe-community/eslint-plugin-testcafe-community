@@ -1,6 +1,6 @@
 {
     "name": "eslint-plugin-testcafe-community",
-    "version": "1.0.1-semantically-released",
+    "version": "1.2.3",
     "description": "Eslint rules for testcafe, from the testcafe community",
     "main": "dist/index.js",
     "files": [
