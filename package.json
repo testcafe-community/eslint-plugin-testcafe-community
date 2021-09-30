@@ -41,7 +41,8 @@
         "generate-readme-table": "ts-node build/generate-readme-table.ts"
     },
     "devDependencies": {
-        "eslint": "^6.8.0",
+        "@types/eslint": "^7.28.0",
+        "eslint": "^7.32.0",
         "jest": "^26.0.1",
         "jest-extended": "^0.11.5",
         "prettier": "^2.1.2",
@@ -52,10 +53,11 @@
         "typescript": "^4.0.2"
     },
     "dependencies": {
-        "@types/eslint": "^7.2.2",
         "@typescript-eslint/experimental-utils": "^4.32.0",
-        "@typescript-eslint/types": "^4.32.0",
-        "requireindex": "^1.2.0"
+        "@typescript-eslint/types": "^4.32.0"
+    },
+    "peerDependencies": {
+        "eslint": ">=6.8.0"
     },
     "engines": {
         "node": ">=10.24",
