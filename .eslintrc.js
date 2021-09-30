@@ -18,15 +18,31 @@ module.exports = {
                 project: "tsconfig.eslint.json",
                 sourceType: "module"
             },
-            plugins: ["@typescript-eslint"],
+            plugins: ["@typescript-eslint", "eslint-plugin"],
             extends: [
                 "eslint:recommended",
                 "airbnb-base",
                 "airbnb-typescript/base",
+                "plugin:eslint-plugin/rules-recommended",
                 "plugin:@typescript-eslint/recommended",
                 "plugin:@typescript-eslint/recommended-requiring-type-checking",
                 "plugin:prettier/recommended"
             ]
+        },
+        {
+            files: ["tests/**"],
+            env: {
+                "jest/globals": true
+            },
+            extends: [
+                "plugin:jest/recommended",
+                "plugin:jest/style",
+                "plugin:eslint-plugin/tests-recommended"
+            ],
+            plugins: ["jest"],
+            rules: {
+                "import/no-extraneous-dependencies": ["error", { devDependencies: true }]
+            }
         },
         {
             files: ["*.js"],
