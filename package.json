@@ -41,20 +41,27 @@
         "generate-readme-table": "ts-node build/generate-readme-table.ts"
     },
     "devDependencies": {
-        "eslint": "^6.8.0",
-        "jest": "^26.0.1",
+        "@types/eslint": "^7.28.0",
+        "@types/jest": "^27.0.2",
+        "eslint": "^7.32.0",
+        "jest": "^27.2.4",
         "jest-extended": "^0.11.5",
-        "prettier": "^2.1.2",
+        "prettier": "^2.4.1",
         "resolve-from": "^5.0.0",
-        "semantic-release": "^17.0.7",
-        "ts-jest": "^26.3.0",
-        "ts-node": "^9.1.1",
-        "typescript": "^4.0.2"
+        "semantic-release": "^18.0.0",
+        "ts-jest": "^27.0.5",
+        "ts-node": "^10.2.1",
+        "typescript": "^4.4.3"
     },
     "dependencies": {
-        "@types/eslint": "^7.2.2",
         "@typescript-eslint/experimental-utils": "^4.32.0",
-        "@typescript-eslint/types": "^4.32.0",
-        "requireindex": "^1.2.0"
+        "@typescript-eslint/types": "^4.32.0"
+    },
+    "peerDependencies": {
+        "eslint": ">=6.8.0"
+    },
+    "engines": {
+        "node": ">=10.24",
+        "npm": ">=7.0.0"
     }
 }
