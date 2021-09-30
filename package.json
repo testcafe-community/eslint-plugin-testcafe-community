@@ -37,6 +37,8 @@
     ],
     "scripts": {
         "build": "tsc",
+        "format": "npm run lint -- --fix",
+        "lint": "eslint . --ext ts,js,md",
         "test": "jest",
         "generate-readme-table": "ts-node build/generate-readme-table.ts"
     },
