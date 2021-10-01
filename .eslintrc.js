@@ -41,12 +41,19 @@ module.exports = {
             ],
             plugins: ["jest"],
             rules: {
-                "import/no-extraneous-dependencies": ["error", { devDependencies: true }]
+                "import/no-extraneous-dependencies": [
+                    "error",
+                    { devDependencies: true }
+                ]
             }
         },
         {
             files: ["*.js"],
-            extends: ["eslint:recommended", "airbnb-base", "plugin:prettier/recommended"]
+            extends: [
+                "eslint:recommended",
+                "airbnb-base",
+                "plugin:prettier/recommended"
+            ]
         },
         {
             files: ["*.md"],
@@ -63,4 +70,4 @@ module.exports = {
             }
         }
     ]
-}
+};
