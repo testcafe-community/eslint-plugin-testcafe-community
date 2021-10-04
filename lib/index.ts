@@ -2,7 +2,7 @@
 // Plugin Definition
 //------------------------------------------------------------------------------
 
-import {
+import type {
     RuleListener,
     RuleMetaDataDocs,
     RuleModule

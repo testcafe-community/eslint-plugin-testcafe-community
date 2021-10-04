@@ -4,21 +4,9 @@
  */
 import type {
     CallExpression,
-    LeftHandSideExpression,
-    MemberExpression,
-    MetaProperty
+    MemberExpression
 } from "@typescript-eslint/types/dist/ast-spec";
-import { AST_NODE_TYPES } from "@typescript-eslint/experimental-utils";
 import { createRule } from "../create-rule";
-
-function hasPropertyAttr(
-    callee: LeftHandSideExpression
-): callee is MemberExpression | MetaProperty {
-    return (
-        callee.type === AST_NODE_TYPES.MemberExpression ||
-        callee.type === AST_NODE_TYPES.MetaProperty
-    );
-}
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -44,14 +32,12 @@ export default createRule({
     create(context) {
         return {
             "CallExpression[callee.property.name='debug']": (
-                node: CallExpression
+                node: CallExpression & { callee: MemberExpression }
             ) => {
-                if (hasPropertyAttr(node.callee)) {
-                    context.report({
-                        node: node.callee.property,
-                        messageId: "noDebugMessage"
-                    });
-                }
+                context.report({
+                    node: node.callee.property,
+                    messageId: "noDebugMessage"
+                });
             }
         };
     }

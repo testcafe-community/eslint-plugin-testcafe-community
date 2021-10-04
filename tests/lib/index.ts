@@ -21,3 +21,7 @@ it("should have a recommended config with recommended rules", () => {
         "testcafe-community/noSkip": "warn"
     });
 });
+
+// it("should handle a config generation if a rule's RuleMetaDocs is obmitted", () => {
+//     //
+// });
