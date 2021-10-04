@@ -2,18 +2,22 @@
  * @fileoverview Don't allow debug() to be committed to the repository.
  * @author Ben Monro
  */
-import {
+import type {
     CallExpression,
     LeftHandSideExpression,
     MemberExpression,
     MetaProperty
 } from "@typescript-eslint/types/dist/ast-spec";
+import { AST_NODE_TYPES } from "@typescript-eslint/experimental-utils";
 import { createRule } from "../create-rule";
 
 function hasPropertyAttr(
     callee: LeftHandSideExpression
 ): callee is MemberExpression | MetaProperty {
-    return "property" in callee;
+    return (
+        callee.type === AST_NODE_TYPES.MemberExpression ||
+        callee.type === AST_NODE_TYPES.MetaProperty
+    );
 }
 
 //------------------------------------------------------------------------------
