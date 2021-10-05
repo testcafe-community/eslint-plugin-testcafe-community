@@ -1,7 +1,39 @@
 # eslint-plugin-testcafe-community
 
-ESLint rules for [testcafe](https://github.com/DevExpress/testcafe) from the
-testcafe community.
+<p align="center">
+  <a href="https://www.npmjs.com/package/eslint-plugin-testcafe-community">
+    <img src="https://img.shields.io/npm/v/eslint-plugin-testcafe-community" />
+  </a>
+  <img src="https://img.shields.io/npm/l/eslint-plugin-testcafe-community?color=yellow">
+  <!-- <a href="https://github.com/testcafe-community/eslint-plugin-testcafe-community/blob/main/CHANGELOG.md">
+    <img src="https://img.shields.io/badge/&#9741-changelog-yellow">
+  </a> -->
+  <a href="https://github.com/testcafe-community/eslint-plugin-testcafe-community/actions/workflows/nodejs.yml">
+    <img src="https://github.com/testcafe-community/eslint-plugin-testcafe-community/actions/workflows/nodejs.yml/badge.svg" >
+  </a>
+  <a href="https://github.com/testcafe-community/eslint-plugin-testcafe-community/issues">
+    <img src="https://img.shields.io/github/issues/testcafe-community/eslint-plugin-testcafe-community">
+  </a>
+  <a href="https://github.com/testcafe-community/eslint-plugin-testcafe-community/pulls">
+    <img src="https://img.shields.io/github/issues-pr/testcafe-community/eslint-plugin-testcafe-community?label=PRs">
+  </a>
+  <img src="https://img.shields.io/snyk/vulnerabilities/npm/eslint-plugin-testcafe-community">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/npm/dependency-version/eslint-plugin-testcafe-community/peer/eslint">
+  <img src="https://img.shields.io/node/v-lts/eslint-plugin-testcafe-community?color=blue">
+  <img src="https://badgen.net/badge/icon/Typescript?icon=typescript&label">
+  <img src="https://img.shields.io/github/last-commit/testcafe-community/eslint-plugin-testcafe-community">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Contributors-PR's_welcome-pink">
+</p>
+<p align="center">
+  ESLint rules for <a href="https://github.com/DevExpress/testcafe">TestCafe</a>
+  from the TestCafe community.
+</p>
+
+---
 
 ## Installation
 
