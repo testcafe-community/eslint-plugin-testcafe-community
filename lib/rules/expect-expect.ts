@@ -3,13 +3,13 @@
  * @author Ben Monro
  * @author codejedi365
  */
-import {
+import type {
     CallExpression,
     MemberExpression,
     Identifier,
-    AST_NODE_TYPES,
     BaseNode
 } from "@typescript-eslint/types/dist/ast-spec";
+import { AST_NODE_TYPES } from "@typescript-eslint/experimental-utils";
 import { createRule } from "../create-rule";
 
 type FunctionName = string;

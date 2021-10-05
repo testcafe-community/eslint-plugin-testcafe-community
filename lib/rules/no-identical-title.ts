@@ -1,9 +1,9 @@
-import {
-    AST_NODE_TYPES,
+import type {
     CallExpression,
     CallExpressionArgument,
     Literal
 } from "@typescript-eslint/types/dist/ast-spec";
+import { AST_NODE_TYPES } from "@typescript-eslint/experimental-utils";
 import { createRule } from "../create-rule";
 
 /**
