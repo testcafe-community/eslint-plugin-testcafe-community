@@ -1,0 +1,33 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+LOG_PREFIX="[.husky/post-checkout]"
+
+. "$(dirname "$0")/hook-utils.sh"
+
+HEAD_PREV="$1"
+HEAD_NEW="$2"
+CKOUT_TYPE_FLAG="$3"      # 0 = retrieve file from index, 1 = changing branches
+
+# check if this is a post-checkout after a `git clone`
+IS_CLONING=$( [ -z "$HEAD_PREV" ] && echo true || echo false )
+
+update_npm_dependencies() {
+  # Only run if chaning branches and not performing the initial `git clone`
+  if [ $CKOUT_TYPE_FLAG == 1 ] && [ $IS_CLONING == false ]; then
+    local changed_files=""
+    # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224
+    changed_files="$(git diff-tree -r --name-only --no-commit-id $HEAD_PREV $HEAD_NEW)"
+
+    if echo "$changed_files" | grep --quiet "package-lock.json"; then
+      log "CHANGE DETECTED: 'package-lock.json'"
+      log "Dependency requirements changed! This will take a few seconds..."
+
+      local cmd="npm install --prefer-offline"
+      log "$> $cmd"
+      eval "$cmd"
+    fi
+  fi
+}
+
+update_npm_dependencies

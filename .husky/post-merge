@@ -1,0 +1,56 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+[ -z "$LOG_PREFIX" ] && LOG_PREFIX="[.husky/post-merge]"
+
+. "$(dirname "$0")/hook-utils.sh"
+
+update_npm_dependencies() {
+  # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224
+  local changed_files=""
+  changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+  local NEEDS_INSTALL=true
+
+  if echo -e "$changed_files" | grep --quiet "package-lock.json"; then
+    log "CHANGE DETECTED: 'package-lock.json'"
+    log "Lock files rarely merge properly. Deleting and re-generating it..."
+
+    local output="$changed_files"
+    output="$(echo -e "$output" | grep "package-lock.json")"
+    local lockfiles=("$output")            # make array of filepaths
+    rm ${lockfiles[@]}
+
+  elif echo -e "$changed_files" | grep --quiet "package.json"; then
+    log "CHANGE DETECTED: 'package.json'"
+    log "Dependencies might of changed, lets make sure we are g2g!"
+  else
+    NEEDS_INSTALL=false
+  fi
+
+  if [ "$NEEDS_INSTALL" == true ]; then
+    cmd="npm install"
+    log "$> $cmd"
+    eval "$cmd"
+
+    changed_files="$(git diff --name-only --diff-filter=d)"
+    if echo -e "$changed_files" | grep --quiet "package-lock.json"; then
+      log "ALL FIXED! package-lock.json needed a refresh."
+
+      local lockfiles=($(echo -e "$changed_files" | grep "package-lock.json"))
+      git add -- "${lockfiles[@]}"
+      
+      for lockfile in "${lockfiles[@]}"; do
+        log "STAGED: $lockfile"
+      done
+      
+      local filenoun="file"
+      if [ "${#lockfiles[@]}" -gt 1 ]; then
+        filenoun="${filenoun}s"
+      fi
+      log "Please commit the newly generated $filenoun for the team!"
+    fi
+  fi
+}
+
+update_npm_dependencies
