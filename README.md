@@ -8,8 +8,8 @@
   <!-- <a href="https://github.com/testcafe-community/eslint-plugin-testcafe-community/blob/main/CHANGELOG.md">
     <img src="https://img.shields.io/badge/&#9741-changelog-yellow">
   </a> -->
-  <a href="https://github.com/testcafe-community/eslint-plugin-testcafe-community/actions/workflows/nodejs.yml">
-    <img src="https://github.com/testcafe-community/eslint-plugin-testcafe-community/actions/workflows/nodejs.yml/badge.svg" >
+  <a href="https://github.com/testcafe-community/eslint-plugin-testcafe-community/actions/workflows/cicd.yml">
+    <img src="https://github.com/testcafe-community/eslint-plugin-testcafe-community/actions/workflows/cicd.yml/badge.svg" >
   </a>
   <a href="https://github.com/testcafe-community/eslint-plugin-testcafe-community/issues">
     <img src="https://img.shields.io/github/issues/testcafe-community/eslint-plugin-testcafe-community">
