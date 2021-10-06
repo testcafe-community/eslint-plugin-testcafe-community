@@ -24,6 +24,10 @@ update_npm_dependencies() {
       log "Dependency requirements changed! This will take a few seconds..."
 
       local cmd="npm install --prefer-offline"
+      if ! command -v npm &>/dev/null; then
+        log "NPM not found on \$PATH, however '$cmd' is desired. Please accomplish manually."
+        return
+      fi
       log "$> $cmd"
       eval "$cmd"
     fi
