@@ -38,7 +38,9 @@
     "scripts": {
         "build": "tsc",
         "format": "npm run lint -- --fix",
-        "lint": "eslint . --ext ts,js,md",
+        "format:file": "npm run lint:file -- --fix",
+        "lint": "npm run lint:file -- . --",
+        "lint:file": "eslint --ext ts,js,md",
         "test": "jest",
         "generate-readme-table": "ts-node build/generate-readme-table.ts",
         "prepare": "is-ci || husky install"

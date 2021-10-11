@@ -9,6 +9,7 @@ const invalidCodeBlockRules = {
 
 module.exports = {
     root: true,
+    ignorePatterns: ["*.json"],
     overrides: [
         {
             files: ["*.ts"],
@@ -49,6 +50,7 @@ module.exports = {
         },
         {
             files: ["*.js"],
+            excludedFiles: ["*.json"],
             extends: [
                 "eslint:recommended",
                 "airbnb-base",
