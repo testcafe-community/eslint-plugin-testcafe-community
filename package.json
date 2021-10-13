@@ -2,7 +2,7 @@
     "name": "eslint-plugin-testcafe-community",
     "version": "1.2.3",
     "description": "Eslint rules for testcafe, from the testcafe community",
-    "main": "dist/index.js",
+    "main": "dist/lib/index.js",
     "files": [
         "dist/**",
         "docs/**"
