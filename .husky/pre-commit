@@ -1,0 +1,21 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+export NODE_ENV=production
+
+LOG_PREFIX="[.husky/pre-commit]"
+
+. "$(dirname "$0")/hook-utils.sh"
+
+if command -v npm &>/dev/null; then
+  staged_files=("$(git diff --staged --name-only --diff-filter=d)")
+  log "$> npm run lint"
+  if ! npm run lint:file -- ${staged_files[@]}; then
+    error "ERROR: Dirty code detected!"
+    error "Fix the lint errors before committing to the repository."
+    exit 1
+  fi
+else
+  error "NPM not found on \$PATH, unable to run pre-commit lint hook."
+  exit 1
+fi

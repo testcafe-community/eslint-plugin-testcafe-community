@@ -1,23 +1,21 @@
-# Don&#39;t allow test.only to be added to the repository (no-only)
+# Don't allow test.only to be added to the repository (no-only)
 
 ## Rule Details
 
-This rule aims to prevent `test.only` from being added to source control.  It's fine to use this locally in development, but this rule aims to prevent it from getting accidentally committed.
+This rule aims to prevent `test.only` from being added to source control. It's
+fine to use this locally in development, but this rule aims to prevent it from
+getting accidentally committed.
 
 Examples of **incorrect** code for this rule:
 
 ```js
-
-test.only("foo", async t => {})
-
+test.only("foo", async (t) => {});
 ```
 
 Examples of **correct** code for this rule:
 
 ```js
-
-test("foo", async t => {})
-
+test("foo", async (t) => {});
 ```
 
 ## When Not To Use It

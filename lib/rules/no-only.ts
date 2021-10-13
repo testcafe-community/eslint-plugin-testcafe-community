@@ -3,6 +3,7 @@
  * @author Ben Monro
  */
 
+import type { MemberExpression } from "@typescript-eslint/types/dist/ast-spec";
 import { createRule } from "../create-rule";
 
 //------------------------------------------------------------------------------
@@ -10,33 +11,32 @@ import { createRule } from "../create-rule";
 //------------------------------------------------------------------------------
 
 export default createRule({
-    defaultOptions:[],
+    defaultOptions: [],
     name: __filename,
     meta: {
-        messages:{
-            noOnly: 'Do not use the `.only` hook.',
+        messages: {
+            noOnly: "Do not use the `.only` hook."
         },
-        type:"problem",
+        type: "problem",
         docs: {
-            description: "Don't allow `test.only` to be added to the repository",
+            description:
+                "Don't allow `test.only` to be added to the repository",
             category: "Best Practices",
             recommended: "error"
         },
         schema: []
     },
 
-    create: function (context) {
-
+    create(context) {
         return {
-
-            "MemberExpression[property.name='only']"(node: any) {
+            "MemberExpression[property.name='only']": (
+                node: MemberExpression
+            ) => {
                 context.report({
                     node: node.property,
                     messageId: "noOnly"
                 });
-            },
-
-
+            }
         };
     }
 });

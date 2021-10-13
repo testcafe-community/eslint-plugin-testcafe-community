@@ -1,0 +1,10 @@
+# Non-linted files
+LICENSE
+
+# generated files/directories
+dist/**
+coverage/**
+package-lock.json
+
+# deliberately out of standard
+example/**

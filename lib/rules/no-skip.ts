@@ -2,8 +2,8 @@
  * @fileoverview Don't allow test.skip to be added to the repository
  * @author Ben Monro
  */
-"use strict";
 
+import type { MemberExpression } from "@typescript-eslint/types/dist/ast-spec";
 import { createRule } from "../create-rule";
 
 //------------------------------------------------------------------------------
@@ -12,30 +12,31 @@ import { createRule } from "../create-rule";
 
 export default createRule({
     name: __filename,
-    defaultOptions:[],
+    defaultOptions: [],
     meta: {
-        messages:{
-            noSkip: 'Do not use the `.skip` hook.'
+        messages: {
+            noSkip: "Do not use the `.skip` hook."
         },
         type: "suggestion",
         docs: {
-            description: "Don't allow `test.skip` or `fixture.skip` to be added to the repository",
+            description:
+                "Don't allow `test.skip` or `fixture.skip` to be added to the repository",
             category: "Best Practices",
-            recommended: "warn",
+            recommended: "warn"
         },
         schema: []
     },
 
-    create: function (context) {
+    create(context) {
         return {
-            "MemberExpression[property.name='skip']"(node: any) {
+            "MemberExpression[property.name='skip']": (
+                node: MemberExpression
+            ) => {
                 context.report({
                     node: node.property,
-                    messageId: 'noSkip'
+                    messageId: "noSkip"
                 });
-            },
-
-
+            }
         };
     }
 });
