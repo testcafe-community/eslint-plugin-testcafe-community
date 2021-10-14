@@ -33,5 +33,5 @@ module.exports = {
             testMatch: ["tests/**/*.serial-test.ts"]
         }
     ],
-    testPathIgnorePatterns: ["<rootDir>/tests/fixtures/"]
+    testPathIgnorePatterns: ["<rootDir>/tests/fixtures/", "<rootDir>/example/"]
 };
