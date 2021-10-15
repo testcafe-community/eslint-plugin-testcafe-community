@@ -1,9 +1,9 @@
 module.exports = {
-    preset: "ts-jest",
     projects: [
         {
             displayName: "unit-tests",
-            testMatch: ["tests/**/*.test.ts"],
+            testMatch: ["<rootDir>/tests/**/*.test.ts"],
+            preset: "ts-jest",
             collectCoverage: true,
             coverageThreshold: {
                 "global": {
@@ -12,7 +12,7 @@ module.exports = {
                     lines: 90,
                     statements: 90
                 },
-                "./lib/rules/expect-expect.ts": {
+                "./lib/rules/expect-expect.test.ts": {
                     // allow error handling
                     lines: -3,
                     statements: -5
@@ -28,9 +28,10 @@ module.exports = {
             // Tests to run in serial
             displayName: "integration-tests",
             collectCoverage: false,
+            preset: "ts-jest",
             runner: "jest-serial-runner",
             // testEnvironment: "node",
-            testMatch: ["tests/**/*.serial-test.ts"]
+            testMatch: ["<rootDir>/tests/**/*.serial-test.ts"]
         }
     ],
     testPathIgnorePatterns: ["<rootDir>/tests/fixtures/", "<rootDir>/example/"]
