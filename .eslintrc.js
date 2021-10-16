@@ -45,7 +45,9 @@ module.exports = {
                 "import/no-extraneous-dependencies": [
                     "error",
                     { devDependencies: true }
-                ]
+                ],
+                "no-console": "off",
+                "@typescript-eslint/no-non-null-assertion": "off" // Tests should throw errors, jest will catch them
             }
         },
         {
