@@ -1,7 +1,7 @@
 module.exports = {
     projects: [
         {
-            displayName: "unit-tests",
+            displayName: "UNIT",
             testMatch: ["<rootDir>/tests/**/*.test.ts"],
             preset: "ts-jest",
             collectCoverage: true,
@@ -26,7 +26,7 @@ module.exports = {
         },
         {
             // Tests to run in serial
-            displayName: "integration-tests",
+            displayName: "INTEGRATION",
             collectCoverage: false,
             preset: "ts-jest",
             runner: "jest-serial-runner",

@@ -5,16 +5,25 @@
         "es2021": true
     },
     "extends": [
-        "eslint:recommended",
-        "plugin:testcafe-community/recommended",
-        "plugin:@typescript-eslint/recommended"
+        "eslint:recommended"
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 12,
-        "sourceType": "module",
-        "project": "tsconfig.eslint.json"
-    },
-    "plugins": ["@typescript-eslint", "testcafe-community"],
+    "overrides": [
+        {
+            "files": ["*.ts"],
+            "parser": "@typescript-eslint/parser",
+            "parserOptions": {
+                "ecmaVersion": 12,
+                "sourceType": "module",
+                "project": "tsconfig.eslint.json"
+            },
+            "extends": "plugin:@typescript-eslint/recommended",
+            "plugins": ["@typescript-eslint"]
+        },
+        {
+            "files": ["*.test.{ts,js}"],
+            "extends": ["plugin:testcafe-community/recommended"],
+            "plugins": ["testcafe-community"]
+        }
+    ],
     "rules": {}
 }

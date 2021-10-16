@@ -4,37 +4,140 @@
  */
 
 import { promisify } from "util";
-import { ChildProcess, spawn, SpawnOptions } from "child_process";
+import { exec, ExecException } from "child_process";
 import { resolve } from "path";
-import { copy, ensureSymlink, readJSON, remove, writeJSON } from "fs-extra";
-import type { Linter } from "eslint";
+import { copy, ensureSymlink, remove, writeJSON } from "fs-extra";
+import type { Linter, ESLint } from "eslint";
 
-const spawnProcess: (
-    arg1: string,
-    arg2: readonly string[],
-    arg3: SpawnOptions
-) => Promise<ChildProcess> = promisify(spawn);
+const SECOND = 1000;
+const SECONDS = SECOND;
+const MINUTE = 60 * SECONDS;
+const MINUTES = MINUTE;
+
+const PROJECT_BUILD_TIMEOUT = 30 * SECONDS;
+const EXAMPLE_PROJECT_INSTALL_TIMEOUT = 1 * MINUTE;
+const EXAMPLE_PROJECT_LINT_EVAL_TIMEOUT = 2 * MINUTES;
+const EXAMPLE_PROJECT_AUTOFORMAT_TIMEOUT = 0 * SECONDS;
+const EXAMPLE_PROJECT_COPY_TIMEOUT = 30 * SECONDS;
+
+const execProcess = promisify(exec);
+
+const baseLintConfig: Linter.Config = {
+    root: true,
+    env: {
+        browser: true,
+        es2021: true
+    },
+    // ignorePatterns: ["!**/*.ts"],
+    overrides: [
+        {
+            files: ["*.ts"],
+            parser: "@typescript-eslint/parser",
+            parserOptions: {
+                ecmaVersion: 12,
+                sourceType: "module",
+                project: "tsconfig.eslint.json"
+            }
+        }
+    ],
+    rules: {}
+};
+
+const baseLintConfigOverride: Linter.ConfigOverride = {
+    files: ["*.test.{ts,js}"],
+    plugins: ["testcafe-community"]
+};
+
+async function restoreTestPkg(templateDirectory: string, destDir: string) {
+    await remove(destDir).catch();
+    await copy(templateDirectory, destDir, {
+        filter: (src) => {
+            return !/\/node_modules|\.eslintrc\.js/.test(src);
+        }
+    });
+
+    await ensureSymlink(
+        resolve(templateDirectory, "node_modules"),
+        resolve(destDir, "node_modules"),
+        "dir"
+    );
+}
 
 async function modifyEslintConfig(
     filePath: string,
-    overrides: Record<string, unknown>
+    overrides: Partial<Linter.Config>
 ): Promise<void> {
-    const eslintConfig = (await readJSON(filePath)) as Linter.Config;
-    await writeJSON(filePath, {
-        ...eslintConfig,
-        ...overrides
-    });
+    // Deep copy of base config
+    const eslintConfig = JSON.parse(
+        JSON.stringify(baseLintConfig)
+    ) as Linter.Config;
+
+    // Append new override
+    eslintConfig.overrides = [
+        ...(eslintConfig.overrides || []),
+        {
+            ...baseLintConfigOverride,
+            ...overrides
+        }
+    ];
+
+    await writeJSON(filePath, eslintConfig, { spaces: 4 });
 }
 
-describe("eslint-plugin-testcafe", () => {
+async function restoreConfigurationFile(targetFile: string) {
+    await modifyEslintConfig(targetFile, {});
+}
+
+async function runLintOnProject(
+    projPath: string,
+    configFilename: string,
+    configOverrides: Partial<Linter.Config> = {},
+    autofix = false
+): Promise<ESLint.LintResult[]> {
+    // SETUP: ensure eslint config is set to recommended
+    await modifyEslintConfig(
+        resolve(projPath, configFilename),
+        configOverrides
+    );
+    // EXECUTE ESLINT via CLI to get results
+    const cmd = [
+        "npx",
+        "eslint",
+        ".",
+        "--format",
+        "json",
+        autofix ? "--fix" : ""
+    ].join(" ");
+
+    let proc: Partial<{ stdout: string; stderr: string }> = {};
+    try {
+        proc = await execProcess(cmd, {
+            cwd: projPath
+        });
+        return [];
+    } catch (error: unknown) {
+        // Should be a rejected promise since lint errors should be detected!
+        const err = error as ExecException & {
+            stdout: string;
+            stderr: string;
+        };
+        if (err.killed || err.code === 2) {
+            // 2 == Oops! Something went wrong!
+            throw err;
+        }
+        proc.stdout = !err.stdout ? "[]" : err.stdout;
+        proc.stderr = err.stderr;
+    }
+    return JSON.parse(proc.stdout) as ESLint.LintResult[];
+}
+
+describe("testcafe-community", () => {
     const examplePkg = resolve(__dirname, "..", "example");
     const testPkgPath = resolve(__dirname, "__cache__", "example");
 
-    beforeAll(async () => {
+    beforeAll(async function buildAndInstallPkg() {
         // Run plugin build
-        await spawnProcess("npm", ["run", "build"], {
-            stdio: ["ignore", "pipe", "pipe"],
-            shell: true,
+        await execProcess(["npm", "run", "build"].join(" "), {
             cwd: process.cwd()
         }).catch((error: Error & { stdout: string; stderr: string }) => {
             console.error("Error occured during 'npm run build'");
@@ -42,10 +145,9 @@ describe("eslint-plugin-testcafe", () => {
             console.log(error.stdout);
             throw error;
         });
+
         // Run install for example package
-        await spawnProcess("npm", ["ci", "--prefer-offline"], {
-            stdio: ["ignore", "pipe", "pipe"],
-            shell: true,
+        await execProcess(["npm", "ci", "--prefer-offline"].join(" "), {
             cwd: examplePkg
         }).catch((error: Error & { stdout: string; stderr: string }) => {
             console.error("Error occured during 'npm ci'");
@@ -53,89 +155,250 @@ describe("eslint-plugin-testcafe", () => {
             console.log(error.stdout);
             throw error;
         });
-    });
 
-    beforeEach(async () => {
         // Create a copy of example package
-        await copy(examplePkg, testPkgPath, {
-            filter: (src) => {
-                return !/\/node_modules\//.test(src);
-            }
-        });
-        await ensureSymlink(
-            resolve(examplePkg, "node_modules"),
-            resolve(testPkgPath, "node_modules"),
-            "dir"
-        );
-    });
+        await restoreTestPkg(examplePkg, testPkgPath);
+    }, PROJECT_BUILD_TIMEOUT +
+        EXAMPLE_PROJECT_INSTALL_TIMEOUT +
+        EXAMPLE_PROJECT_COPY_TIMEOUT);
 
-    afterEach(async () => {
-        // Remove the example package copy
+    afterAll(async () => {
         await remove(testPkgPath);
     });
 
-    it("should find 5 errors in example package with the recommended ruleset", async () => {
-        // SETUP: ensure eslint config is set to recommended
-        await modifyEslintConfig(resolve(testPkgPath, ".eslintrc.json"), {
-            extends: ["plugin:testcafe-community/recommended"],
-            plugins: ["testcafe-community"]
-        });
-        // Execute
-        const lintProc: ChildProcess = await spawnProcess(
-            "npx",
-            ["eslint", ".", "--format", "json"],
-            {
-                stdio: ["ignore", "pipe", "pipe"],
-                shell: true,
-                cwd: examplePkg
-            }
-        );
-        const lintResults: unknown = JSON.parse(lintProc.stdout.toString());
-        expect(lintResults).toEqual([]);
-    });
+    describe("recommended", () => {
+        let lintResults: ESLint.LintResult[] = [];
 
-    it("should find 5 errors in example package with all rules on", async () => {
-        // SETUP: change eslint config is set to all
-        await modifyEslintConfig(resolve(testPkgPath, ".eslintrc.json"), {
-            extends: ["plugin:testcafe-community/all"],
-            plugins: ["testcafe-community"]
-        });
-        // Execute
-        const lintProc: ChildProcess = await spawnProcess(
-            "npx",
-            ["eslint", ".", "--format", "json"],
-            {
-                stdio: ["ignore", "pipe", "pipe"],
-                shell: true,
-                cwd: examplePkg
-            }
-        );
-        const lintResults: unknown = JSON.parse(lintProc.stdout.toString());
-        expect(lintResults).toEqual([]);
-    });
-
-    describe("auto-fix", () => {
-        it("should fix errors in example package when --fix is provided", async () => {
-            // Get the number of rules that provide fixes, subtract it from expected number of results
-            // change the eslint config to all
-            // SETUP: ensure eslint config is set to recommended
-            await modifyEslintConfig(resolve(testPkgPath, ".eslintrc.json"), {
-                extends: ["plugin:testcafe-community/recommended"],
-                plugins: ["testcafe-community"]
-            });
-            // Execute
-            // Note that no rules autofix at this time so no results are fixed.
-            const lintProc: ChildProcess = await spawnProcess(
-                "npx",
-                ["eslint", ".", "--fix", "--format", "json"],
+        beforeAll(async () => {
+            lintResults = await runLintOnProject(
+                testPkgPath,
+                ".eslintrc.json",
                 {
-                    stdio: ["ignore", "pipe", "pipe"],
-                    shell: true,
-                    cwd: examplePkg
+                    extends: ["plugin:testcafe-community/recommended"]
                 }
             );
-            const lintResults: unknown = JSON.parse(lintProc.stdout.toString());
-            expect(lintResults).toEqual([]);
+        }, EXAMPLE_PROJECT_LINT_EVAL_TIMEOUT);
+
+        afterAll(async () => {
+            await restoreConfigurationFile(
+                resolve(testPkgPath, ".eslintrc.json")
+            );
+        });
+
+        it("should report 5 errors, 1 warning, 0 fixable errors, 0 fixable warnings", () => {
+            expect(lintResults).toEqual<ESLint.LintResult[]>(
+                expect.arrayContaining<ESLint.LintResult>([
+                    expect.objectContaining<Partial<ESLint.LintResult>>({
+                        filePath: resolve(testPkgPath, "example.test.ts"),
+                        errorCount: 5,
+                        warningCount: 1,
+                        fixableErrorCount: 0,
+                        fixableWarningCount: 0,
+                        usedDeprecatedRules: []
+                    })
+                ])
+            );
+        });
+    });
+
+    describe("all", () => {
+        let lintResults: ESLint.LintResult[] = [];
+
+        beforeAll(async () => {
+            lintResults = await runLintOnProject(
+                testPkgPath,
+                ".eslintrc.json",
+                {
+                    // TODO: implement all configuration
+                    // extends: ["plugin:testcafe-community/all"],
+                    extends: ["plugin:testcafe-community/recommended"]
+                }
+            );
+        }, EXAMPLE_PROJECT_LINT_EVAL_TIMEOUT);
+
+        afterAll(async () => {
+            await restoreConfigurationFile(
+                resolve(testPkgPath, ".eslintrc.json")
+            );
+        });
+
+        it("should report 5 errors, 1 warning, 0 fixable errors, 0 fixable warnings", () => {
+            expect(lintResults).toEqual<ESLint.LintResult[]>(
+                expect.arrayContaining<ESLint.LintResult>([
+                    expect.objectContaining<Partial<ESLint.LintResult>>({
+                        filePath: resolve(testPkgPath, "example.test.ts"),
+                        errorCount: 5,
+                        warningCount: 1,
+                        fixableErrorCount: 0,
+                        fixableWarningCount: 0,
+                        usedDeprecatedRules: []
+                    })
+                ])
+            );
+        });
+
+        it("should report an expectExpect rule error", () => {
+            expect(lintResults).toEqual<ESLint.LintResult[]>(
+                expect.arrayContaining<ESLint.LintResult>([
+                    expect.objectContaining<Partial<ESLint.LintResult>>({
+                        filePath: resolve(testPkgPath, "example.test.ts"),
+                        messages: expect.arrayContaining<Linter.LintMessage>([
+                            expect.objectContaining<
+                                Partial<Linter.LintMessage>
+                            >({
+                                ruleId: "testcafe-community/expectExpect",
+                                severity: 2,
+                                message:
+                                    "Please ensure your test has at least one expect",
+                                line: 17,
+                                column: 1,
+                                nodeType: "CallExpression",
+                                messageId: "missingExpect",
+                                endLine: 20,
+                                endColumn: 3
+                            }) as Linter.LintMessage
+                        ]) as Linter.LintMessage[]
+                    })
+                ])
+            );
+        });
+
+        it("should report a noDebug rule error", () => {
+            expect(lintResults).toEqual<ESLint.LintResult[]>(
+                expect.arrayContaining<ESLint.LintResult>([
+                    expect.objectContaining<Partial<ESLint.LintResult>>({
+                        filePath: resolve(testPkgPath, "example.test.ts"),
+                        messages: expect.arrayContaining<Linter.LintMessage>([
+                            expect.objectContaining<
+                                Partial<Linter.LintMessage>
+                            >({
+                                ruleId: "testcafe-community/noDebug",
+                                severity: 2,
+                                message: "Do not use the `.debug` action.",
+                                line: 19,
+                                column: 7,
+                                nodeType: "Identifier",
+                                messageId: "noDebugMessage",
+                                endLine: 19,
+                                endColumn: 12
+                            }) as Linter.LintMessage
+                        ]) as Linter.LintMessage[]
+                    })
+                ])
+            );
+        });
+
+        it("should report a noIdenticalTitle rule error", () => {
+            expect(lintResults).toEqual<ESLint.LintResult[]>(
+                expect.arrayContaining<ESLint.LintResult>([
+                    expect.objectContaining<Partial<ESLint.LintResult>>({
+                        filePath: resolve(testPkgPath, "example.test.ts"),
+                        messages: expect.arrayContaining<Linter.LintMessage>([
+                            expect.objectContaining<
+                                Partial<Linter.LintMessage>
+                            >({
+                                ruleId: "testcafe-community/noIdenticalTitle",
+                                severity: 2,
+                                message: "",
+                                // line: 19,
+                                // column: 7,
+                                nodeType: "",
+                                messageId: "noIdenticalTitle"
+                                // endLine: 19,
+                                // endColumn: 12
+                            }) as Linter.LintMessage
+                        ]) as Linter.LintMessage[]
+                    })
+                ])
+            );
+        });
+
+        it("should report a noOnly rule error", () => {
+            expect(lintResults).toEqual<ESLint.LintResult[]>(
+                expect.arrayContaining<ESLint.LintResult>([
+                    expect.objectContaining<Partial<ESLint.LintResult>>({
+                        filePath: resolve(testPkgPath, "example.test.ts"),
+                        messages: expect.arrayContaining<Linter.LintMessage>([
+                            expect.objectContaining<
+                                Partial<Linter.LintMessage>
+                            >({
+                                ruleId: "testcafe-community/noOnly",
+                                severity: 2,
+                                message: "Do not use the `.only` hook.",
+                                line: 11,
+                                column: 6,
+                                nodeType: "Identifier",
+                                messageId: "noOnly",
+                                endLine: 11,
+                                endColumn: 10
+                            }) as Linter.LintMessage
+                        ]) as Linter.LintMessage[]
+                    })
+                ])
+            );
+        });
+
+        it("should report a noSkip rule warning", () => {
+            expect(lintResults).toEqual<ESLint.LintResult[]>(
+                expect.arrayContaining<ESLint.LintResult>([
+                    expect.objectContaining<Partial<ESLint.LintResult>>({
+                        filePath: resolve(testPkgPath, "example.test.ts"),
+                        messages: expect.arrayContaining<Linter.LintMessage>([
+                            expect.objectContaining<
+                                Partial<Linter.LintMessage>
+                            >({
+                                ruleId: "testcafe-community/noSkip",
+                                severity: 1,
+                                message: "Do not use the `.skip` hook.",
+                                line: 17,
+                                column: 6,
+                                nodeType: "Identifier",
+                                messageId: "noSkip",
+                                endLine: 17,
+                                endColumn: 10
+                            }) as Linter.LintMessage
+                        ]) as Linter.LintMessage[]
+                    })
+                ])
+            );
+        });
+
+        describe("--fix", () => {
+            let postFixLintResults: ESLint.LintResult[] = [];
+
+            beforeAll(async () => {
+                const autofix = true;
+                postFixLintResults = await runLintOnProject(
+                    testPkgPath,
+                    ".eslintrc.json",
+                    {
+                        // TODO: implement all configuration
+                        // extends: ["plugin:testcafe-community/all"],
+                        extends: ["plugin:testcafe-community/recommended"]
+                    },
+                    autofix
+                );
+            }, EXAMPLE_PROJECT_LINT_EVAL_TIMEOUT + EXAMPLE_PROJECT_AUTOFORMAT_TIMEOUT);
+
+            afterAll(async () => {
+                await restoreTestPkg(examplePkg, testPkgPath);
+            });
+
+            it("should report 5 errors, 1 warning, 0 fixable errors, 0 fixable warnings", () => {
+                // Get the number of rules that provide fixes, subtract it from expected number of results
+                // Note that no rules autofix at this time so no results are fixed.
+                expect(postFixLintResults).toEqual<ESLint.LintResult[]>(
+                    expect.arrayContaining<ESLint.LintResult>([
+                        expect.objectContaining<Partial<ESLint.LintResult>>({
+                            filePath: resolve(testPkgPath, "example.test.ts"),
+                            errorCount: 5,
+                            warningCount: 1,
+                            fixableErrorCount: 0,
+                            fixableWarningCount: 0
+                        })
+                    ])
+                );
+            });
         });
     });
 });
