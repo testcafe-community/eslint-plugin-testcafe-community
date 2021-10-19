@@ -66,6 +66,10 @@ file:
 }
 ```
 
+You may review our
+[example TS/JS package](https://github.com/testcafe-community/eslint-plugin-testcafe-community/tree/master/example)
+embedded in this repository for an example configuration and plugin testing.
+
 See
 [ESLint documentation](http://eslint.org/docs/user-guide/configuring#extending-configuration-files)
 for more information about extending configuration files.

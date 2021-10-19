@@ -1,8 +1,9 @@
 # Example Package
 
 This folder is a barebones webpage that has TestCafe journey tests for
-validation. This package represents the ESLint configuration needed to import
-the `eslint-plugin-testcafe-community` plugin and evaluate a file.
+validation. This package represents the ESLint configuration
+[.eslintrc.json](./.eslintrc.json) needed to import the
+`eslint-plugin-testcafe-community` plugin and evaluate a file.
 
 The journey test is expected to have at least one example of all invalid
 configurations to exemplify how the `testcafe-community` plugin will identify
