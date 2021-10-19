@@ -23,7 +23,7 @@
   <img src="https://img.shields.io/npm/dependency-version/eslint-plugin-testcafe-community/peer/eslint">
   <img src="https://img.shields.io/node/v-lts/eslint-plugin-testcafe-community?color=blue">
   <img src="https://badgen.net/badge/icon/Typescript?icon=typescript&label">
-  <img src="https://img.shields.io/github/last-commit/testcafe-community/eslint-plugin-testcafe-community">
+  <img src="https://img.shields.io/github/last-commit/testcafe-community/eslint-plugin-testcafe-community/next">
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/Contributors-PR's_welcome-pink">
