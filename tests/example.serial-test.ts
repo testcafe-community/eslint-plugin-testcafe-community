@@ -302,11 +302,11 @@ describe("testcafe-community", () => {
                                 message:
                                     "Don't use identical titles for your tests",
                                 line: 11,
-                                column: 1,
-                                nodeType: "CallExpression",
+                                column: 11,
+                                nodeType: "Literal",
                                 messageId: "noIdenticalTitles",
-                                endLine: 14,
-                                endColumn: 3
+                                endLine: 11,
+                                endColumn: 48
                             }) as Linter.LintMessage,
                             expect.objectContaining<
                                 Partial<Linter.LintMessage>
@@ -316,11 +316,11 @@ describe("testcafe-community", () => {
                                 message:
                                     "Don't use identical titles for your tests",
                                 line: 17,
-                                column: 1,
-                                nodeType: "CallExpression",
+                                column: 11,
+                                nodeType: "Literal",
                                 messageId: "noIdenticalTitles",
-                                endLine: 20,
-                                endColumn: 3
+                                endLine: 17,
+                                endColumn: 48
                             }) as Linter.LintMessage
                         ]) as Linter.LintMessage[]
                     })

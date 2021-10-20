@@ -6,6 +6,7 @@
 
 import type {
     CallExpression,
+    CallExpressionArgument,
     Literal
 } from "@typescript-eslint/types/dist/ast-spec";
 import { determineCodeLocation } from "../utils/locator";
@@ -23,6 +24,10 @@ const testFnAttributes = [
     "disablePageReloads"
 ];
 
+function isRegExp(value: Literal["value"]): value is RegExp {
+    return Object.getPrototypeOf(value) === RegExp.prototype;
+}
+
 /**
  * Type safe method to extract possible test name of type string
  * Prevents user from providing invalid arg0 to `test()` which can cause eslint to crash
@@ -34,10 +39,7 @@ function getValidTestName(node: CallExpression): string {
         throw new Error("Not a Literal expression.");
     }
     const arg0value: Literal["value"] = node.arguments[0].value;
-    if (
-        arg0value === null ||
-        Object.getPrototypeOf(arg0value) === RegExp.prototype
-    ) {
+    if (arg0value === null || isRegExp(arg0value)) {
         throw new Error(
             "Unusable Literal value for test names (NullLiteral & RegExpLiteral)"
         );
@@ -68,7 +70,7 @@ export default createRule({
         let isInsideTest = false;
         let hasRecordedTestName = false;
 
-        const testTitles: { [key: string]: [CallExpression] } = {};
+        const testTitles: { [key: string]: [CallExpressionArgument] } = {};
 
         const resetFlags = () => {
             hasRecordedTestName = false;
@@ -77,9 +79,9 @@ export default createRule({
 
         const addTestTitle = (testTitle: string, node: CallExpression) => {
             if (testTitle in testTitles) {
-                testTitles[testTitle].push(node);
+                testTitles[testTitle].push(node.arguments[0]);
             } else {
-                testTitles[testTitle] = [node];
+                testTitles[testTitle] = [node.arguments[0]];
             }
         };
 
@@ -135,9 +137,9 @@ export default createRule({
         const evaluateForIdenticalTitles = () => {
             const duplicateNamedNodes = Object.values(testTitles).reduce(
                 (
-                    result: CallExpression[],
-                    nodeList: CallExpression[]
-                ): CallExpression[] => {
+                    result: CallExpressionArgument[],
+                    nodeList: CallExpressionArgument[]
+                ): CallExpressionArgument[] => {
                     return nodeList.length > 1
                         ? result.concat(nodeList)
                         : result;
