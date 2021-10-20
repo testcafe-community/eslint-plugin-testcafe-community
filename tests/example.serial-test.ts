@@ -299,13 +299,28 @@ describe("testcafe-community", () => {
                             >({
                                 ruleId: "testcafe-community/noIdenticalTitle",
                                 severity: 2,
-                                message: "",
-                                // line: 19,
-                                // column: 7,
-                                nodeType: "",
-                                messageId: "noIdenticalTitle"
-                                // endLine: 19,
-                                // endColumn: 12
+                                message:
+                                    "Don't use identical titles for your tests",
+                                line: 11,
+                                column: 11,
+                                nodeType: "Literal",
+                                messageId: "noIdenticalTitles",
+                                endLine: 11,
+                                endColumn: 48
+                            }) as Linter.LintMessage,
+                            expect.objectContaining<
+                                Partial<Linter.LintMessage>
+                            >({
+                                ruleId: "testcafe-community/noIdenticalTitle",
+                                severity: 2,
+                                message:
+                                    "Don't use identical titles for your tests",
+                                line: 17,
+                                column: 11,
+                                nodeType: "Literal",
+                                messageId: "noIdenticalTitles",
+                                endLine: 17,
+                                endColumn: 48
                             }) as Linter.LintMessage
                         ]) as Linter.LintMessage[]
                     })
