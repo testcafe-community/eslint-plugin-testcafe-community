@@ -43,6 +43,7 @@
         "lint:file": "eslint --ext ts,js,md",
         "test": "jest",
         "generate-readme-table": "ts-node build/generate-readme-table.ts",
+        "preinstall": "npx npm-force-resolutions",
         "prepare": "is-ci || husky install"
     },
     "devDependencies": {
@@ -83,6 +84,9 @@
     },
     "peerDependencies": {
         "eslint": ">=6.8.0"
+    },
+    "resolutions": {
+      "trim": "^1.0.1"
     },
     "engines": {
         "node": ">=10.24",
