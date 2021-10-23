@@ -3,8 +3,11 @@
  * @author Ben Monro
  * @author codejedi365
  */
-import type { CallExpression } from "@typescript-eslint/types/dist/ast-spec";
-import { determineCodeLocation } from "../utils/locator";
+import type {
+    CallExpression,
+    BaseNode
+} from "@typescript-eslint/types/dist/ast-spec";
+import { determineCodeLocation, isAncestorOf } from "../utils/locator";
 import { createRule } from "../create-rule";
 
 const testFnAttributes = [
@@ -40,63 +43,95 @@ export default createRule({
     create(context) {
         let hasExpect = false;
         let isInsideTest = false;
-        let ignoreExpects = false;
+        let currentTestNode: CallExpression | null = null;
+        let testFnImplementationNode: BaseNode | null = null;
+
+        const resetFlags = () => {
+            hasExpect = false;
+            isInsideTest = false;
+            currentTestNode = null;
+            testFnImplementationNode = null;
+        };
+
+        const activateExpectTracking = (node: CallExpression) => {
+            isInsideTest = true;
+            currentTestNode = node;
+            [, testFnImplementationNode] = currentTestNode.arguments;
+        };
+
+        const isInsideTestFnImplementation = (node: CallExpression) => {
+            return testFnImplementationNode
+                ? isAncestorOf(testFnImplementationNode, node)
+                : false;
+        };
+
+        const validateExpectWasFound = (node: CallExpression) => {
+            if (!hasExpect) {
+                context.report({ node, messageId: "missingExpect" });
+            }
+            resetFlags();
+        };
+
+        const unknownFnCallENTER = (node: CallExpression) => {
+            if (isInsideTest && hasExpect) return; // Short circuit, already found
+
+            let fnName;
+            let objectName;
+            try {
+                [fnName, objectName] = determineCodeLocation(node);
+            } catch (e) {
+                // ABORT: Failed to evaluate rule effectively
+                // since I cannot derive values to determine location in the code
+                return;
+            }
+
+            // Determine if inside/chained to a test() function
+            if (objectName !== "test") return;
+            if (fnName === "test" || testFnAttributes.includes(fnName)) {
+                activateExpectTracking(node);
+            }
+        };
+
+        const unknownFnCallEXIT = (node: CallExpression) => {
+            if (isInsideTest && node === currentTestNode) {
+                validateExpectWasFound(node);
+            }
+        };
+
+        const testFnCallExpression = "CallExpression[arguments.length=2]";
+        const expectFnCallExpression =
+            "CallExpression[arguments.length=1][callee.property.name=expect]";
+
         return {
-            "CallExpression": (node: CallExpression) => {
-                if (isInsideTest && hasExpect) return; // Short circuit, already found
-
-                let fnName;
-                let objectName;
-                try {
-                    [fnName, objectName] = determineCodeLocation(node);
-                } catch (e) {
-                    // ABORT: Failed to evaluate rule effectively
-                    // since I cannot derive values to determine location in the code
-                    return;
+            // UNCOMMENT to Debug step-by-step
+            // ---------------------------------
+            // "CallExpression": (node: CallExpression) => {
+            //     debugger;
+            // },
+            // "CallExpression:exit": (node: CallExpression) => {
+            //     debugger;
+            // },
+            // ---------------------------------
+            // test("name", () => {}), ENTER
+            [`${testFnCallExpression}[callee.name=test]`]:
+                activateExpectTracking,
+            // test("name", () => {}), EXIT
+            [`${testFnCallExpression}[callee.name=test]:exit`]:
+                unknownFnCallEXIT,
+            [`${testFnCallExpression}[callee.type=CallExpression]`]:
+                unknownFnCallENTER,
+            [`${testFnCallExpression}[callee.type=CallExpression]:exit`]:
+                unknownFnCallEXIT,
+            [`${testFnCallExpression}[callee.type=MemberExpression]`]:
+                unknownFnCallENTER,
+            [`${testFnCallExpression}[callee.type=MemberExpression]:exit`]:
+                unknownFnCallEXIT,
+            // expect(actual), ENTER
+            [expectFnCallExpression]: (node: CallExpression) => {
+                if (!isInsideTest || hasExpect) return; // Short circuit
+                if (isInsideTestFnImplementation(node)) {
+                    hasExpect = true;
                 }
-
-                if (isInsideTest) {
-                    if (ignoreExpects) return;
-                    if (fnName === "expect") {
-                        hasExpect = true;
-                        return;
-                    }
-                    if (objectName === "test") {
-                        // only happens in chained methods with internal callbacks
-                        // like test.before(() => {})("my test", async () => {})
-                        // prevents any registering of an expect in the before() callback
-                        ignoreExpects = true;
-                    }
-                    return;
-                }
-                // Determine if inside/chained to a test() function
-                if (objectName !== "test") return;
-                if (fnName === "test" || testFnAttributes.includes(fnName)) {
-                    isInsideTest = true;
-                }
-            },
-
-            "CallExpression:exit": (node: CallExpression) => {
-                if (!isInsideTest) return; // Short circuit
-
-                let fnName;
-                let objectName;
-                try {
-                    [fnName, objectName] = determineCodeLocation(node);
-                } catch (e) {
-                    // ABORT: Failed to evaluate rule effectively
-                    // since I cannot derive values to determine location in the code
-                    return;
-                }
-                if (objectName !== "test") return;
-                if (fnName === "test" || testFnAttributes.includes(fnName)) {
-                    if (!hasExpect) {
-                        context.report({ node, messageId: "missingExpect" });
-                    }
-                    hasExpect = false;
-                    isInsideTest = false;
-                }
-                ignoreExpects = false;
             }
         };
     }

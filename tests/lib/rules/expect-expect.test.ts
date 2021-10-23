@@ -199,22 +199,9 @@ describe("Error Handling", () => {
             throw new Error("FATAL: Unable to determine code location");
         });
         expect(() => {
-            ruleFns.CallExpression(fakeNode);
-        }).not.toThrow();
-    });
-    it("Ignores an undeterminable code location internal error of CallExpression:exit", () => {
-        determineCodeLocationMock
-            .mockImplementationOnce(() => {
-                return ["test", "test"];
-            })
-            .mockImplementationOnce(() => {
-                throw new Error("FATAL: Unable to determine code location");
-            });
-        // simulate enter of test();
-        ruleFns.CallExpression(fakeNode);
-        // Test proper exit of test() that fails;
-        expect(() => {
-            ruleFns["CallExpression:exit"](fakeNode);
+            ruleFns[
+                "CallExpression[arguments.length=2][callee.type=CallExpression]"
+            ](fakeNode);
         }).not.toThrow();
     });
 });

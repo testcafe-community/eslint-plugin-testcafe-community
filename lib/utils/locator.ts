@@ -9,6 +9,7 @@ import type {
     Identifier,
     BaseNode
 } from "@typescript-eslint/types/dist/ast-spec";
+import { AST_NODE_TYPES } from "@typescript-eslint/experimental-utils";
 import {
     isCallExpression,
     isIdentifier,
@@ -85,4 +86,20 @@ export function determineCodeLocation(
     node: CallExpression
 ): [FunctionName, ObjectName] {
     return [deriveFunctionName(node), deriveObjectName(node)];
+}
+
+export function isAncestorOf(
+    ancestorNode: BaseNode,
+    childNode: BaseNode
+): boolean {
+    function checkParent(child: BaseNode, parent: BaseNode): boolean {
+        if (child === parent) {
+            return true;
+        }
+        if (child.parent && child.parent.type !== AST_NODE_TYPES.Program) {
+            return checkParent(child.parent, parent);
+        }
+        return false;
+    }
+    return checkParent(childNode, ancestorNode);
 }
