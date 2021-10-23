@@ -1,9 +1,10 @@
-import fs from "fs/promises";
+import { promises as fsPromises } from "fs";
 import { resolve } from "path";
 import rulebook from "../../lib/rules";
 import { configs } from "../../lib";
 import "jest-extended";
 
+const fs = fsPromises;
 let rulesSpy: jest.SpyInstance;
 
 beforeEach(() => {
