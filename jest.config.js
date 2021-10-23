@@ -17,12 +17,13 @@ module.exports = {
     projects: [
         {
             displayName: "UNIT",
-            testMatch: ["<rootDir>/tests/**/*.test.ts"],
-            preset: "ts-jest"
+            preset: "ts-jest",
+            runner: "@codejedi365/jest-serial-runner",
+            testMatch: ["<rootDir>/tests/**/*.test.ts"]
         },
         {
             // Tests to run in serial
-            displayName: "INTEGRATION",
+            displayName: "E2E",
             preset: "ts-jest",
             runner: "@codejedi365/jest-serial-runner",
             testMatch: ["<rootDir>/tests/**/*.serial-test.ts"]
