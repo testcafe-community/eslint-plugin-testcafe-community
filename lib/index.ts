@@ -2,32 +2,11 @@
 // Plugin Definition
 //------------------------------------------------------------------------------
 
-import type {
-    RuleListener,
-    RuleMetaDataDocs,
-    RuleModule
-} from "@typescript-eslint/experimental-utils/dist/ts-eslint";
-import noDebug from "./rules/no-debug";
-import noOnly from "./rules/no-only";
-import noSkip from "./rules/no-skip";
-import noIdenticalTitle from "./rules/no-identical-title";
-import expectExpect from "./rules/expect-expect";
+import type { Linter } from "eslint";
+import rulebook from "./rules";
 
-export const rules: {
-    [key: string]: RuleModule<string, unknown[], RuleListener>;
-} = {
-    noDebug,
-    noSkip,
-    noOnly,
-    noIdenticalTitle,
-    expectExpect
-};
-
-export const generateRecommendedConfig = (): Record<
-    string,
-    RuleMetaDataDocs["recommended"]
-> => {
-    return Object.entries(rules).reduce((memo, [name, rule]) => {
+export const generateRecommendedConfig = (): Partial<Linter.RulesRecord> => {
+    return Object.entries(rulebook.rules).reduce((memo, [name, rule]) => {
         return !rule.meta.docs
             ? memo
             : {
@@ -37,13 +16,17 @@ export const generateRecommendedConfig = (): Record<
     }, {});
 };
 
+export const { rules } = rulebook;
+
 export const configs = {
-    recommended: {
-        globals: {
-            fixture: false,
-            test: false
-        },
-        plugins: ["testcafe-community"],
-        rules: generateRecommendedConfig()
+    get recommended(): Linter.Config {
+        return {
+            globals: {
+                fixture: false,
+                test: false
+            },
+            plugins: ["testcafe-community"],
+            rules: generateRecommendedConfig()
+        };
     }
 };
