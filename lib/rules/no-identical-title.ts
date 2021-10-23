@@ -98,7 +98,7 @@ export default createRule({
         };
 
         const unknownFnCallENTER = (node: CallExpression) => {
-            if (isInsideTest && hasRecordedTestName) return; // Short circuit, already found
+            if (hasRecordedTestName) return; // Short circuit, already found
 
             let fnName;
             let objectName;

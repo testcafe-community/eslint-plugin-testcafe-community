@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don't allow debug() to be committed to the repository.
+ * @fileoverview Don't forget to have at least 1 expect() call in each test!
  * @author Ben Monro
  * @author codejedi365
  */

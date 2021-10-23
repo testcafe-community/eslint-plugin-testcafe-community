@@ -2,12 +2,12 @@ module.exports = {
     collectCoverage: true,
     coverageThreshold: {
         "global": {
-            branches: 90,
-            functions: 100,
+            branches: 85,
             lines: 90,
-            statements: 90
+            statements: 90,
+            functions: 100
         },
-        "./lib/rules/expect-expect.test.ts": {
+        "./lib/rules/expect-expect.ts": {
             // allow error handling
             lines: -3,
             statements: -5
