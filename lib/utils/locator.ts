@@ -46,12 +46,8 @@ function digForIdentifierName(startNode: BaseNode): string {
     }
 
     // Start Point
-    try {
-        if (!checkTypeForRecursion(startNode)) throw new Error();
-        return deriveFnName(startNode);
-    } catch (e) {
-        throw new Error("Could not derive function name from callee.");
-    }
+    if (!checkTypeForRecursion(startNode)) throw new Error();
+    return deriveFnName(startNode);
 }
 
 export function deriveFunctionName(fnCall: CallExpression): string {
@@ -61,7 +57,11 @@ export function deriveFunctionName(fnCall: CallExpression): string {
             ? fnCall.callee.property
             : fnCall.callee;
 
-    return digForIdentifierName(startNode);
+    try {
+        return digForIdentifierName(startNode);
+    } catch (e) {
+        throw new Error("Could not derive function name from callee.");
+    }
 }
 
 /**
@@ -74,7 +74,11 @@ export function deriveFunctionName(fnCall: CallExpression): string {
  * @returns top level symbol for name of object
  */
 export function deriveObjectName(fnCall: CallExpression): string {
-    return digForIdentifierName(fnCall.callee);
+    try {
+        return digForIdentifierName(fnCall.callee);
+    } catch (e) {
+        throw new Error("Could not derive object name from callee.");
+    }
 }
 
 export function determineCodeLocation(
