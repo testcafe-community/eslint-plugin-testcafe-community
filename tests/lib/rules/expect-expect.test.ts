@@ -54,14 +54,14 @@ describe("ESLint Code Snippets", () => {
             })`,
             // More than 1 function on t
             `test("foo", async t => {
-                await t.click(button)
-                await t.expect(foo).eql(bar)
+                await t.click(button);
+                await t.expect(foo).eql("bar", "failed to equal bar");
             })`,
             // Multiple expects
             `test("foo", async t => {
                 await t.click(button)
-                await t.expect(foo).eql(bar)
                 await t.expect(true).ok()
+                await t.expect(foo).eql("bar", "failed to equal bar");
             })`,
             // chained function with callback parameter
             `test.before(async t => {
@@ -73,7 +73,7 @@ describe("ESLint Code Snippets", () => {
             // Multiple tests
             `fixture("My Fixture")
                 .page("https://example.com");
-    
+
             test("test1", async t => {
                 await t.useRole(adminRole);
                 await t.expect(foo).eql(bar);
@@ -81,6 +81,10 @@ describe("ESLint Code Snippets", () => {
             test("test2", async t => {
                 await t.click(button);
                 await t.expect(foo).eql(bar);
+            });`,
+            // Futuristic TestCafe || unexpected test chain => ignore as valid
+            `test.futureModifier("test", async t => {
+                await t.expect(true).ok();
             });`
         ],
         invalid: [
