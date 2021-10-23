@@ -1,13 +1,11 @@
 module.exports = {
-    testMatch: ["**/tests/**/*.ts"],
     collectCoverage: true,
-    preset: "ts-jest",
     coverageThreshold: {
         "global": {
-            branches: 90,
-            functions: 100,
+            branches: 85,
             lines: 90,
-            statements: 90
+            statements: 90,
+            functions: 100
         },
         "./lib/rules/expect-expect.ts": {
             // allow error handling
@@ -15,6 +13,21 @@ module.exports = {
             statements: -5
         }
     },
-    testPathIgnorePatterns: ["<rootDir>/tests/fixtures/"],
-    collectCoverageFrom: ["lib/**/*.ts", "index.ts", "!**/node_modules/**"]
+    collectCoverageFrom: ["lib/**/*.ts", "index.ts", "!**/node_modules/**"],
+    projects: [
+        {
+            displayName: "UNIT",
+            preset: "ts-jest",
+            runner: "@codejedi365/jest-serial-runner",
+            testMatch: ["<rootDir>/tests/**/*.test.ts"]
+        },
+        {
+            // Tests to run in serial
+            displayName: "E2E",
+            preset: "ts-jest",
+            runner: "@codejedi365/jest-serial-runner",
+            testMatch: ["<rootDir>/tests/**/*.serial-test.ts"]
+        }
+    ],
+    testPathIgnorePatterns: ["<rootDir>/tests/fixtures/", "<rootDir>/example/"]
 };

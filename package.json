@@ -41,13 +41,20 @@
         "format:file": "npm run lint:file -- --fix",
         "lint": "npm run lint:file -- . --",
         "lint:file": "eslint --ext ts,js,md",
-        "test": "jest",
+        "test": "run-s --silent test:*",
+        "test:unit": "jest --selectProjects UNIT",
+        "test:e2e": "jest --selectProjects E2E --coverage=false",
         "generate-readme-table": "ts-node build/generate-readme-table.ts",
-        "prepare": "is-ci || husky install"
+        "preinstall": "npx npm-force-resolutions",
+        "prepare": "is-ci || husky install",
+        "watch": "npm run test:unit -- --watch --"
     },
     "devDependencies": {
+        "@codejedi365/jest-serial-runner": "^2.0.0",
         "@types/eslint": "^7.28.0",
+        "@types/fs-extra": "^9.0.13",
         "@types/jest": "^27.0.2",
+        "@types/node": "^16.11.0",
         "@typescript-eslint/eslint-plugin": "^4.32.0",
         "@typescript-eslint/parser": "^4.32.0",
         "@typescript-eslint/types": "^4.32.0",
@@ -59,10 +66,12 @@
         "eslint-plugin-jest": "^24.5.0",
         "eslint-plugin-mdx": "^1.15.1",
         "eslint-plugin-prettier": "^4.0.0",
+        "fs-extra": "^10.0.0",
         "husky": "^7.0.2",
         "is-ci": "^3.0.0",
         "jest": "^27.2.4",
         "jest-extended": "^0.11.5",
+        "npm-run-all": "^4.1.5",
         "prettier": "^2.4.1",
         "remark-preset-lint-consistent": "^4.0.0",
         "remark-preset-lint-markdown-style-guide": "^4.0.0",
@@ -79,6 +88,9 @@
     },
     "peerDependencies": {
         "eslint": ">=6.8.0"
+    },
+    "resolutions": {
+        "trim": "^1.0.1"
     },
     "engines": {
         "node": ">=10.24",
