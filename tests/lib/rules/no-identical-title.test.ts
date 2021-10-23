@@ -84,6 +84,10 @@ describe("ESLint Code Snippets", () => {
                 await t.click().expect(true).ok();
             });
             `,
+            // Futuristic TestCafe || unexpected test chain => ignore as valid
+            `test.futureModifier("test", async t => {
+                await t.expect(true).ok();
+            });`,
             // ignore undeterminable code (don't throw an error, not this rule's focus)
             `test(/^regex_name/, async t => {});`,
             `test(null, async t => {})`,

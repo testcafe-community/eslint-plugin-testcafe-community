@@ -69,12 +69,14 @@ export default createRule({
     create(context) {
         let isInsideTest = false;
         let hasRecordedTestName = false;
+        let currentTestNode: CallExpression | null = null;
 
         const testTitles: { [key: string]: [CallExpressionArgument] } = {};
 
         const resetFlags = () => {
             hasRecordedTestName = false;
             isInsideTest = false;
+            currentTestNode = null;
         };
 
         const addTestTitle = (testTitle: string, node: CallExpression) => {
@@ -93,6 +95,7 @@ export default createRule({
                 return;
             }
             isInsideTest = true;
+            currentTestNode = node;
             addTestTitle(testTitle, node);
             hasRecordedTestName = true;
         };
@@ -117,19 +120,7 @@ export default createRule({
         };
 
         const unknownFnCallEXIT = (node: CallExpression) => {
-            if (!isInsideTest) return; // Short circuit
-
-            let fnName;
-            let objectName;
-            try {
-                [fnName, objectName] = determineCodeLocation(node);
-            } catch (e) {
-                // ABORT: Failed to evaluate rule effectively
-                // since I cannot derive values to determine location in the code
-                return;
-            }
-            if (objectName !== "test") return;
-            if (fnName === "test" || testFnAttributes.includes(fnName)) {
+            if (isInsideTest && node === currentTestNode) {
                 resetFlags();
             }
         };
@@ -166,9 +157,8 @@ export default createRule({
             ) => {
                 extractTestTitle(node);
             },
-            [`${testFnCallExpression}[callee.name=test]:exit`]: () => {
-                resetFlags();
-            },
+            [`${testFnCallExpression}[callee.name=test]:exit`]:
+                unknownFnCallEXIT,
             [`${testFnCallExpression}[callee.type=CallExpression]`]:
                 unknownFnCallENTER,
             [`${testFnCallExpression}[callee.type=CallExpression]:exit`]:
