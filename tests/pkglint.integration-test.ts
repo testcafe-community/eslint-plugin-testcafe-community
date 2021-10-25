@@ -271,8 +271,8 @@ describe.each(getEslintPeerLibraries())(
                             fixableErrorCount: 0,
                             fixableWarningCount: 0,
                             usedDeprecatedRules: []
-                        })
-                    ])
+                        }) as ESLint.LintResult
+                    ]) as ESLint.LintResult[]
                 );
             });
         });
@@ -308,8 +308,8 @@ describe.each(getEslintPeerLibraries())(
                             fixableErrorCount: 0,
                             fixableWarningCount: 0,
                             usedDeprecatedRules: []
-                        })
-                    ])
+                        }) as ESLint.LintResult
+                    ]) as ESLint.LintResult[]
                 );
             });
 
@@ -335,8 +335,8 @@ describe.each(getEslintPeerLibraries())(
                                         endColumn: 3
                                     }) as Linter.LintMessage
                                 ]) as Linter.LintMessage[]
-                        })
-                    ])
+                        }) as ESLint.LintResult
+                    ]) as ESLint.LintResult[]
                 );
             });
 
@@ -362,8 +362,8 @@ describe.each(getEslintPeerLibraries())(
                                         endColumn: 12
                                     }) as Linter.LintMessage
                                 ]) as Linter.LintMessage[]
-                        })
-                    ])
+                        }) as ESLint.LintResult
+                    ]) as ESLint.LintResult[]
                 );
             });
 
@@ -403,8 +403,8 @@ describe.each(getEslintPeerLibraries())(
                                         endColumn: 48
                                     }) as Linter.LintMessage
                                 ]) as Linter.LintMessage[]
-                        })
-                    ])
+                        }) as ESLint.LintResult
+                    ]) as ESLint.LintResult[]
                 );
             });
 
@@ -429,8 +429,8 @@ describe.each(getEslintPeerLibraries())(
                                         endColumn: 10
                                     }) as Linter.LintMessage
                                 ]) as Linter.LintMessage[]
-                        })
-                    ])
+                        }) as ESLint.LintResult
+                    ]) as ESLint.LintResult[]
                 );
             });
 
@@ -455,8 +455,8 @@ describe.each(getEslintPeerLibraries())(
                                         endColumn: 10
                                     }) as Linter.LintMessage
                                 ]) as Linter.LintMessage[]
-                        })
-                    ])
+                        }) as ESLint.LintResult
+                    ]) as ESLint.LintResult[]
                 );
             });
 
@@ -497,8 +497,8 @@ describe.each(getEslintPeerLibraries())(
                                     fixableErrorCount: 0,
                                     fixableWarningCount: 0
                                 }
-                            )
-                        ])
+                            ) as ESLint.LintResult
+                        ]) as ESLint.LintResult[]
                     );
                 });
             });
