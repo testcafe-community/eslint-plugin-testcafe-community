@@ -147,10 +147,10 @@ describe("testcafe-community", () => {
         });
 
         // Run install for example package
-        await execProcess(["npm", "ci", "--prefer-offline"].join(" "), {
+        await execProcess(["npm", "install", "--prefer-offline"].join(" "), {
             cwd: examplePkg
         }).catch((error: Error & { stdout: string; stderr: string }) => {
-            console.error("Error occured during 'npm ci'");
+            console.error("Error occured during 'npm install'");
             console.error(error.stderr);
             console.log(error.stdout);
             throw error;
