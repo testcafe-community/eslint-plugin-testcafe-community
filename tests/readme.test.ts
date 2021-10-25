@@ -39,13 +39,17 @@ describe("README.md", () => {
                     .digest("hex");
                 expect(actualHash).toEqual(expectedHash);
             },
-            10 * SECONDS
+            15 * SECONDS
         );
     });
 
-    it("should be properly formatted markdown", async () => {
-        await expect(
-            exec(`npx eslint --ext md "${README_LOCATION}"`)
-        ).resolves.toBeTruthy();
-    });
+    it(
+        "should be properly formatted markdown",
+        async () => {
+            await expect(
+                exec(`npx eslint --ext md "${README_LOCATION}"`)
+            ).resolves.toBeTruthy();
+        },
+        10 * SECONDS
+    );
 });
