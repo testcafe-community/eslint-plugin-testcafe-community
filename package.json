@@ -45,7 +45,7 @@
         "test:unit": "jest --selectProjects UNIT",
         "test:e2e": "jest --selectProjects E2E --coverage=false",
         "generate-readme-table": "ts-node build/generate-readme-table.ts",
-        "preinstall": "npx npm-force-resolutions",
+        "preinstall": "npx force-resolutions",
         "prepare": "is-ci || husky install",
         "watch": "npm run test:unit -- --watch --"
     },
