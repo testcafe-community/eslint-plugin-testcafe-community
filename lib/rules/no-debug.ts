@@ -23,7 +23,6 @@ export default createRule({
         docs: {
             description:
                 "Don't allow `t.debug()` to be committed to the repository. ",
-            category: "Best Practices",
             recommended: "error"
         },
         schema: []

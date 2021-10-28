@@ -21,7 +21,6 @@ export default createRule({
         docs: {
             description:
                 "Don't allow `test.only` to be added to the repository",
-            category: "Best Practices",
             recommended: "error"
         },
         schema: []
