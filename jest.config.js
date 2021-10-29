@@ -22,11 +22,10 @@ module.exports = {
             testMatch: ["<rootDir>/tests/**/*.test.ts"]
         },
         {
-            // Tests to run in serial
-            displayName: "E2E",
+            displayName: "INTEGRATION",
             preset: "ts-jest",
             runner: "@codejedi365/jest-serial-runner",
-            testMatch: ["<rootDir>/tests/**/*.serial-test.ts"]
+            testMatch: ["<rootDir>/tests/**/*.integration-test.ts"]
         }
     ],
     testPathIgnorePatterns: ["<rootDir>/tests/fixtures/", "<rootDir>/example/"]

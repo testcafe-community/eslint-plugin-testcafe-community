@@ -43,7 +43,7 @@
         "lint:file": "eslint --ext ts,js,md",
         "test": "run-s --silent test:*",
         "test:unit": "jest --selectProjects UNIT",
-        "test:e2e": "jest --selectProjects E2E --coverage=false",
+        "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
         "generate-readme-table": "ts-node build/generate-readme-table.ts",
         "preinstall": "npx force-resolutions",
         "prepare": "is-ci || husky install",
