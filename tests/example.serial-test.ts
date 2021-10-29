@@ -145,11 +145,27 @@ describe("testcafe-community", () => {
             console.log(error.stdout);
             throw error;
         });
+        // Create production package
+        const result = await execProcess(
+            ["npm", "pack", "--pack-destination", examplePkg].join(" "),
+            {
+                cwd: process.cwd()
+            }
+        ).catch((error: Error & { stdout: string; stderr: string }) => {
+            console.error("Error occured during 'npm pack'");
+            console.error(error.stderr);
+            console.log(error.stdout);
+            throw error;
+        });
+        const pkgTarball = result.stdout.trim() || "";
 
         // Run install for example package
-        await execProcess(["npm", "install", "--prefer-offline"].join(" "), {
-            cwd: examplePkg
-        }).catch((error: Error & { stdout: string; stderr: string }) => {
+        await execProcess(
+            ["npm", "install", pkgTarball, "--prefer-offline"].join(" "),
+            {
+                cwd: examplePkg
+            }
+        ).catch((error: Error & { stdout: string; stderr: string }) => {
             console.error("Error occured during 'npm install'");
             console.error(error.stderr);
             console.log(error.stdout);
