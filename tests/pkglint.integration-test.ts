@@ -196,15 +196,19 @@ describe.each(getEslintPeerLibraries())(
         const testPkgPath = resolve(__dirname, "__cache__", "example");
 
         beforeAll(async function buildAndInstallPkg() {
-            // Run plugin build
-            await execProcess(["npm", "run", "build"].join(" "), {
-                cwd: process.cwd()
-            }).catch((error: Error & { stdout: string; stderr: string }) => {
-                console.error("Error occured during 'npm run build'");
-                console.error(error.stderr);
-                console.log(error.stdout);
-                throw error;
-            });
+            if (!process.env.CI) {
+                // Run plugin build
+                await execProcess(["npm", "run", "build"].join(" "), {
+                    cwd: process.cwd()
+                }).catch(
+                    (error: Error & { stdout: string; stderr: string }) => {
+                        console.error("Error occured during 'npm run build'");
+                        console.error(error.stderr);
+                        console.log(error.stdout);
+                        throw error;
+                    }
+                );
+            }
             // Create production package
             const result = await execProcess(
                 ["npm", "pack", "--pack-destination", examplePkg].join(" "),
