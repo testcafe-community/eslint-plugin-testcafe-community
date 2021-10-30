@@ -60,7 +60,6 @@ export default createRule({
         },
         docs: {
             description: "Don't use identical titles for your tests",
-            category: "Best Practices",
             recommended: "error"
         },
         schema: []

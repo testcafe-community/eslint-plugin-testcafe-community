@@ -35,7 +35,6 @@ export default createRule({
         },
         docs: {
             description: "Ensure tests have at least one expect",
-            category: "Best Practices",
             recommended: "error"
         },
         schema: []
