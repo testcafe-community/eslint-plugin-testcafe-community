@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint --ext ts,js .",
-    "test": "testcafe chrome:headless **/*.test.ts"
+    "test": "testcafe chrome:headless **/*.test.ts **/*.test.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.6.1",
