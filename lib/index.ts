@@ -5,7 +5,7 @@
 import type { Linter } from "eslint";
 import rulebook from "./rules";
 
-export const generateRecommendedConfig = (): Partial<Linter.RulesRecord> => {
+const generateRecommendedConfig = (): Partial<Linter.RulesRecord> => {
     return Object.entries(rulebook.rules).reduce((memo, [name, rule]) => {
         return !rule.meta.docs
             ? memo
