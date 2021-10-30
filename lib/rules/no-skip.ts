@@ -17,11 +17,10 @@ export default createRule({
         messages: {
             noSkip: "Do not use the `.skip` hook."
         },
-        type: "suggestion",
+        type: "problem",
         docs: {
             description:
                 "Don't allow `test.skip` or `fixture.skip` to be added to the repository",
-            category: "Best Practices",
             recommended: "warn"
         },
         schema: []

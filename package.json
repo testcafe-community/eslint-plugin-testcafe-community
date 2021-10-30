@@ -1,6 +1,6 @@
 {
     "name": "eslint-plugin-testcafe-community",
-    "version": "1.2.3",
+    "version": "1.0.0-autoversioned",
     "description": "Eslint rules for testcafe, from the testcafe community",
     "main": "dist/lib/index.js",
     "files": [
@@ -13,14 +13,9 @@
     },
     "author": "Ben Monro <ben.monro@gmail.com>",
     "contributors": [
-        {
-            "name": "Mikhail Losev",
-            "email": "miherlosev@mail.ru"
-        },
-        {
-            "name": "codejedi365",
-            "email": "codejedi365@gmail.com"
-        }
+        "Mikhail Losev <miherlosev@mail.ru>",
+        "codejedi365 <codejedi365@gmail.com>",
+        "Matthias Klass <matthias.klass@tngtech.com>"
     ],
     "license": "MIT",
     "bugs": {
@@ -43,9 +38,8 @@
         "lint:file": "eslint --ext ts,js,md",
         "test": "run-s --silent test:*",
         "test:unit": "jest --selectProjects UNIT",
-        "test:e2e": "jest --selectProjects E2E --coverage=false",
+        "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
         "generate-readme-table": "ts-node build/generate-readme-table.ts",
-        "preinstall": "npx force-resolutions",
         "prepare": "is-ci || husky install",
         "watch": "npm run test:unit -- --watch --"
     },
@@ -55,9 +49,10 @@
         "@types/fs-extra": "^9.0.13",
         "@types/jest": "^27.0.2",
         "@types/node": "^16.11.0",
+        "@types/semver": "^7.3.9",
         "@typescript-eslint/eslint-plugin": "^4.32.0",
         "@typescript-eslint/parser": "^4.32.0",
-        "@typescript-eslint/types": "^4.32.0",
+        "@typescript-eslint/types": "^5.2.0",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-config-airbnb-typescript": "^14.0.0",
@@ -79,18 +74,16 @@
         "remark-preset-prettier": "^0.5.1",
         "resolve-from": "^5.0.0",
         "semantic-release": "^18.0.0",
+        "semver": "^7.3.5",
         "ts-jest": "^27.0.5",
         "ts-node": "^10.2.1",
         "typescript": "^4.4.3"
     },
     "dependencies": {
-        "@typescript-eslint/experimental-utils": "^4.32.0"
+        "@typescript-eslint/experimental-utils": "^5.2.0"
     },
     "peerDependencies": {
-        "eslint": ">=6.8.0"
-    },
-    "resolutions": {
-        "trim": "^1.0.1"
+        "eslint": "^7.0.0 || ^8.0.0"
     },
     "engines": {
         "node": ">=10.24"

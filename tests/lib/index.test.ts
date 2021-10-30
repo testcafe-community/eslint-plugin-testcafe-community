@@ -38,7 +38,6 @@ describe("Rule Definitions", () => {
             const rule = rulebook.rules[ruleName];
             expect(rule).toHaveProperty("create", expect.any(Function));
             expect(rule.meta.docs?.url).not.toBeEmpty();
-            expect(rule.meta.docs?.category).toBe("Best Practices");
             expect(rule.meta.docs?.description).not.toBeEmpty();
         }
     );
