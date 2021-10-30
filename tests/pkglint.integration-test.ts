@@ -162,7 +162,14 @@ function getEslintPeerLibraries() {
     }
     const peers = new Set([semverObj.version]);
     const resultJSON = execSync(
-        ["npm", "info", "eslint", "versions", "--json", "--offline"].join(" "),
+        [
+            "npm",
+            "info",
+            "eslint",
+            "versions",
+            "--json",
+            "--prefer-offline"
+        ].join(" "),
         {
             encoding: "utf-8"
         }
