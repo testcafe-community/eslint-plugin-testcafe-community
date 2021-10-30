@@ -47,6 +47,12 @@ const baseLintConfig: Linter.Config = {
                 sourceType: "module",
                 project: "tsconfig.eslint.json"
             }
+        },
+        {
+            files: ["*.js"],
+            env: {
+                node: true
+            }
         }
     ],
     rules: {}
