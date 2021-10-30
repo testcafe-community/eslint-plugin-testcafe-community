@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: ${{ env.node-version }}
           cache: 'npm'
-      - run: npm ci --prefer-offline
+      - run: npm ci --prefer-offline --no-fund --no-audit
       - run: npm run lint
 
 
@@ -36,7 +36,7 @@ jobs:
           node-version: ${{ env.node-version }}
           cache: 'npm'
 
-      - run: npm ci --prefer-offline
+      - run: npm ci --prefer-offline --no-fund --no-audit
       - run: npm run build --if-present
       - run: npm run test:unit
 
@@ -67,7 +67,7 @@ jobs:
         with:
           name: dist-bundle
           path: dist/
-      - run: npm ci --prefer-offline      
+      - run: npm ci --prefer-offline --no-fund --no-audit
       - run: npm run test:plugin
 
 
@@ -87,7 +87,7 @@ jobs:
         with:
           name: dist-bundle
           path: dist/
-      - run: npm ci --prefer-offline
+      - run: npm ci --prefer-offline --no-fund --no-audit
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
