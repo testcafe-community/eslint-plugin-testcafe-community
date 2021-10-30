@@ -45,7 +45,6 @@
         "test:unit": "jest --selectProjects UNIT",
         "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
         "generate-readme-table": "ts-node build/generate-readme-table.ts",
-        "preinstall": "npx force-resolutions",
         "prepare": "is-ci || husky install",
         "watch": "npm run test:unit -- --watch --"
     },
@@ -90,9 +89,6 @@
     },
     "peerDependencies": {
         "eslint": "^7.0.0"
-    },
-    "resolutions": {
-        "trim": "^1.0.1"
     },
     "engines": {
         "node": ">=10.24"
