@@ -13,14 +13,8 @@
     },
     "author": "Ben Monro <ben.monro@gmail.com>",
     "contributors": [
-        {
-            "name": "Mikhail Losev",
-            "email": "miherlosev@mail.ru"
-        },
-        {
-            "name": "codejedi365",
-            "email": "codejedi365@gmail.com"
-        }
+        "Mikhail Losev <miherlosev@mail.ru>",
+        "codejedi365 <codejedi365@gmail.com>"
     ],
     "license": "MIT",
     "bugs": {
