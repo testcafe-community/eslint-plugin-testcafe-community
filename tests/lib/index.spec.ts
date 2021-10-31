@@ -2,7 +2,6 @@ import { access, readdir } from "fs-extra";
 import { resolve } from "path";
 import rulebook from "../../lib/rules";
 import { configs } from "../../lib";
-import "jest-extended";
 
 let rulesSpy: jest.SpyInstance;
 
