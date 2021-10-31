@@ -1,16 +1,11 @@
 module.exports = {
     collectCoverage: true,
     coverageThreshold: {
-        "global": {
+        global: {
             branches: 85,
             lines: 90,
             statements: 90,
             functions: 100
-        },
-        "./lib/rules/expect-expect.ts": {
-            // allow error handling
-            lines: -3,
-            statements: -5
         }
     },
     collectCoverageFrom: ["lib/**/*.ts", "index.ts", "!**/node_modules/**"],
@@ -19,7 +14,7 @@ module.exports = {
             displayName: "UNIT",
             preset: "ts-jest",
             runner: "@codejedi365/jest-serial-runner",
-            testMatch: ["<rootDir>/tests/**/*.test.ts"]
+            testMatch: ["<rootDir>/tests/**/*.spec.ts"]
         },
         {
             displayName: "INTEGRATION",

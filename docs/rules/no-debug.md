@@ -1,4 +1,6 @@
-# Don't allow debug() to be committed to the repository. (no-debug)
+# `no-debug`
+
+_Don't use `t.debug()` permanently in tests._
 
 ## Rule Details
 
@@ -9,29 +11,42 @@ getting accidentally committed.
 Examples of **incorrect** code for this rule:
 
 ```js
+// EXAMPLE 1
 test("should do stuff", async (t) => {
-    t.debug();
+    await t.debug();
 });
 
+// EXAMPLE 2
 fixture`foo`.beforeEach(async (t) => {
     await t.click(Selector("foo")).debug();
 });
 
+// EXAMPLE 3
 test("should do stuff", async (t) => {
-    await t.click(Selector("foo")).debug();
+    await t.click(Selector("foo"));
+    // Don't use debug output to match a snapshot!
+    await t.expect(t.debug()).toEqual("<p>Hello World!</p>");
 });
 ```
 
 Examples of **correct** code for this rule:
 
 ```js
-t.click();
-t.typeText(Selector(".debug"), "Hello");
+// EXAMPLE 1
+fixture`foo`.beforeEach(async (t) => {
+    await t.click(Selector("foo"));
+});
+
+// EXAMPLE 2
+test("should do stuff", async (t) => {
+    await t.expect(Selector("foo").exists).ok();
+});
 ```
 
 ## When Not To Use It
 
-If you don't care if people add debug calls to your source code repository.
+If you would rather test verify specific html output or create long logs for
+each test output.
 
 ## Further Reading
 

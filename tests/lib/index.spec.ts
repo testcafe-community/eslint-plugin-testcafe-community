@@ -57,11 +57,11 @@ describe("recommended config", () => {
 
     it("should include the recommended rules from this plugin", () => {
         expect(configs.recommended.rules).toEqual({
-            "testcafe-community/expectExpect": "error",
-            "testcafe-community/noDebug": "error",
-            "testcafe-community/noIdenticalTitle": "error",
-            "testcafe-community/noOnly": "error",
-            "testcafe-community/noSkip": "warn"
+            "testcafe-community/missing-expect": "error",
+            "testcafe-community/no-debug": "error",
+            "testcafe-community/no-disabled-tests": "warn",
+            "testcafe-community/no-duplicate-titles": "error",
+            "testcafe-community/no-focused-tests": "error"
         });
     });
 

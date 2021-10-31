@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don&#39;t forget to have at least 1 expect() call in every test!
+ * @fileoverview Don't forget to have at least 1 `t.expect()` in every test!
  * @author Ben Monro
  * @author codejedi365
  */
@@ -13,7 +13,7 @@ import {
     AST_NODE_TYPES
 } from "@typescript-eslint/experimental-utils";
 import resolveFrom from "resolve-from";
-import rule from "../../../lib/rules/expect-expect";
+import rule from "../../../lib/rules/missing-expect";
 import { determineCodeLocation } from "../../../lib/utils/locator";
 
 jest.mock("../../../lib/utils/locator", () => {
@@ -39,7 +39,7 @@ const ruleTester = new TSESLint.RuleTester({
 // Tests
 //------------------------------------------------------------------------------
 describe("ESLint Code Snippets", () => {
-    ruleTester.run("expect-expect", rule, {
+    ruleTester.run("missing-expect", rule, {
         valid: [
             `test("foo", async t => { await t.expect(foo).eql(bar) })`,
             `test.skip("foo", async t => { await t.expect(foo).eql(bar) })`,
@@ -92,25 +92,25 @@ describe("ESLint Code Snippets", () => {
                 code: `test("foo", async t => {
                     await t.click(button)
                 })`,
-                errors: [{ messageId: "missingExpect" }]
+                errors: [{ messageId: "missing-expect" }]
             },
             {
                 code: `test.skip("foo", async t => {
                     await t.click(button)
                 })`,
-                errors: [{ messageId: "missingExpect" }]
+                errors: [{ messageId: "missing-expect" }]
             },
             {
                 code: `test.page("./foo")("foo", async t => {
                     await t.click(button)
                 })`,
-                errors: [{ messageId: "missingExpect" }]
+                errors: [{ messageId: "missing-expect" }]
             },
             {
                 code: `test.skip.page("./foo")("foo", async t => {
                     await t.click(button)
                 })`,
-                errors: [{ messageId: "missingExpect" }]
+                errors: [{ messageId: "missing-expect" }]
             },
             {
                 code: `test.before(async t => {
@@ -119,7 +119,7 @@ describe("ESLint Code Snippets", () => {
                 })("foo", async t => {
                     await t.click(button);
                 })`,
-                errors: [{ messageId: "missingExpect" }]
+                errors: [{ messageId: "missing-expect" }]
             },
             {
                 code: `test("foo", async t => {
@@ -128,7 +128,7 @@ describe("ESLint Code Snippets", () => {
                         .click(button)
                         .wait(1000)
                 })`,
-                errors: [{ messageId: "missingExpect" }]
+                errors: [{ messageId: "missing-expect" }]
             },
             {
                 // Missing one expect across 2 tests
@@ -143,7 +143,7 @@ describe("ESLint Code Snippets", () => {
                 test("test2", async t => {
                     await t.click(button);
                 });`,
-                errors: [{ messageId: "missingExpect" }]
+                errors: [{ messageId: "missing-expect" }]
             }
         ]
     });
@@ -154,7 +154,7 @@ describe("Error Handling", () => {
         jest.clearAllMocks();
     });
     const ruleFns = rule.create({
-        id: "expectExpectError",
+        id: "missing-expect-error",
         options: [],
         parserOptions: {},
         parserPath: resolveFrom(require.resolve("eslint"), "espree"),
