@@ -9,17 +9,24 @@ module.exports = {
         }
     },
     collectCoverageFrom: ["lib/**/*.ts", "index.ts", "!**/node_modules/**"],
+    globals: {
+        "ts-jest": {
+            tsconfig: "tsconfig.jest.json"
+        }
+    },
     projects: [
         {
             displayName: "UNIT",
             preset: "ts-jest",
             runner: "@codejedi365/jest-serial-runner",
+            setupFilesAfterEnv: ["jest-extended/all"],
             testMatch: ["<rootDir>/tests/**/*.spec.ts"]
         },
         {
             displayName: "INTEGRATION",
             preset: "ts-jest",
             runner: "@codejedi365/jest-serial-runner",
+            setupFilesAfterEnv: ["jest-extended/all"],
             testMatch: ["<rootDir>/tests/**/*.integration-test.ts"]
         }
     ],
