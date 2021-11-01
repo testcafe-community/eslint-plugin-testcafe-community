@@ -32,6 +32,8 @@
     ],
     "scripts": {
         "build": "tsc",
+        "commit": "git-cz --hook",
+        "commit-retry": "CZ_RETRY=true git commit",
         "format": "npm run lint -- --fix",
         "format:file": "npm run lint:file -- --fix",
         "lint": "npm run lint:file -- . --",
@@ -88,6 +90,11 @@
     },
     "peerDependencies": {
         "eslint": "^7.0.0 || ^8.0.0"
+    },
+    "config": {
+        "commitizen": {
+            "path": "@commitlint/cz-commitlint"
+        }
     },
     "engines": {
         "node": ">=10.24"
