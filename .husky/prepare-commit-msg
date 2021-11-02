@@ -1,0 +1,21 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+[ -z "$LOG_PREFIX" ] && LOG_PREFIX="[.husky/prepare-commit-msg]"
+[ -z "$CZ_RETRY" ] && CZ_RETRY=false
+
+. "$(dirname "$0")/hook-utils.sh"
+
+log "Starting commitizen cli for conventional commits..."
+
+# Default
+CZ_OPTIONS="--hook"
+cmd="exec </dev/tty && npx git-cz $CZ_OPTIONS || true"
+
+if [ $CZ_RETRY == "true" ]; then
+  CZ_OPTIONS="--retry"
+  cmd="npx git-cz --retry || true"
+fi
+
+log "$> npx cz ${CZ_OPTIONS}"
+eval "$cmd"

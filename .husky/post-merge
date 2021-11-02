@@ -8,7 +8,7 @@
 update_npm_dependencies() {
   # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224
   local changed_files=""
-  changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+  changed_files="$(git diff-tree -r --name-only --diff-filter=M --no-commit-id ORIG_HEAD HEAD)"
 
   local NEEDS_INSTALL=true
 
@@ -29,7 +29,7 @@ update_npm_dependencies() {
   fi
 
   if [ "$NEEDS_INSTALL" == true ]; then
-    cmd="npm install"
+    cmd="npm install --prefer-offline --no-fund --no-audit"
     if ! command -v npm &>/dev/null; then
       log "NPM not found on \$PATH, however '$cmd' is desired. Please accomplish manually."
       return
