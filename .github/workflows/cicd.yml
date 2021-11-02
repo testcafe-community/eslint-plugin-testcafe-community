@@ -23,10 +23,9 @@ jobs:
       - run: npm run lint
 
 
-  lint:commits:
+  lint-commits:
     name: Semantic commits
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == pull_request }}
     env:
       node-version: 16.x
     steps:
@@ -37,13 +36,15 @@ jobs:
           node-version: ${{ env.node-version }}
           cache: 'npm'
       - run: npm ci --prefer-offline --no-fund --no-audit
-      - run: npx commitlint --verbose
+      - name: PR commits check
+        if: ${{ github.event_name == 'pull_request' }}
+        run: npx commitlint --verbose
              --from ${{ github.event.pull_request.base.sha }}
              --to ${{ github.event.pull_request.head.sha }}
 
 
   build:
-    name: Build Code Bundle
+    name: Build
     runs-on: ubuntu-latest
     env:
         node-version: 16.x
@@ -93,6 +94,7 @@ jobs:
   release:
     needs: 
       - lint
+      - lint-commits
       - integration
     runs-on: ubuntu-latest
     steps:
