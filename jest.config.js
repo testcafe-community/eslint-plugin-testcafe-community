@@ -1,3 +1,12 @@
+const tsJestPresets = {
+    preset: "ts-jest",
+    globals: {
+        "ts-jest": {
+            tsconfig: "tsconfig.jest.json"
+        }
+    }
+};
+
 module.exports = {
     collectCoverage: true,
     coverageThreshold: {
@@ -9,22 +18,17 @@ module.exports = {
         }
     },
     collectCoverageFrom: ["lib/**/*.ts", "index.ts", "!**/node_modules/**"],
-    globals: {
-        "ts-jest": {
-            tsconfig: "tsconfig.jest.json"
-        }
-    },
     projects: [
         {
             displayName: "UNIT",
-            preset: "ts-jest",
+            ...tsJestPresets,
             runner: "@codejedi365/jest-serial-runner",
             setupFilesAfterEnv: ["jest-extended/all"],
             testMatch: ["<rootDir>/tests/**/*.spec.ts"]
         },
         {
             displayName: "INTEGRATION",
-            preset: "ts-jest",
+            ...tsJestPresets,
             runner: "@codejedi365/jest-serial-runner",
             setupFilesAfterEnv: ["jest-extended/all"],
             testMatch: ["<rootDir>/tests/**/*.integration-test.ts"]
