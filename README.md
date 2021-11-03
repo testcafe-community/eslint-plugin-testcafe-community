@@ -26,6 +26,9 @@
   <img src="https://img.shields.io/github/last-commit/testcafe-community/eslint-plugin-testcafe-community/next">
 </p>
 <p align="center">
+  <a href="https://github.com/semantic-release/semantic-release">
+    <img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" >
+  </a>
   <img src="https://img.shields.io/badge/Contributors-PR's_welcome-pink">
 </p>
 <p align="center">
@@ -199,3 +202,9 @@ You have a couple solutions to avoid these issues:
    this directory, create another `.eslintrc` configuration file that defines an
    override entry for the files in this directory and loads the
    testcafe-community plugin/extension.
+
+## Contributors
+
+PR's & Issue contributions welcome! Please adhere to
+[contributing guidelines](https://github.com/testcafe-community/eslint-plugin-testcafe-community/blob/master/CONTRIBUTING.md)
+or your submission will be closed or delayed.
