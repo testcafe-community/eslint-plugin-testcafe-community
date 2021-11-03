@@ -32,7 +32,7 @@
     ],
     "scripts": {
         "build": "tsc",
-        "commit": "git-cz --hook",
+        "commit": "git commit",
         "commit-retry": "CZ_RETRY=true git commit",
         "format": "npm run lint -- --fix",
         "format:file": "npm run lint:file -- --fix",
