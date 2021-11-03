@@ -12,6 +12,28 @@ CKOUT_TYPE_FLAG="$3"      # 0 = retrieve file from index, 1 = changing branches
 # check if this is a post-checkout after a `git clone`
 IS_CLONING=$( [ -z "$HEAD_PREV" ] && echo true || echo false )
 
+config_git_commit_signing() {
+  if [ $IS_CLONING == true ]; then
+    log "Configuring Git: commit.gpgsign=true"
+    if ! git config --local commit.gpgsign true; then
+      error "ERROR: Failed to configure GPG signing for commits."
+      error "Commits are required to be signed for this repository."
+      exit 1
+    elif ! git config --get user.signingkey &>/dev/null; then
+      log "==============================================================="
+      log "                   USER ACTION REQUIRED!"
+      log "---------------------------------------------------------------"
+      log "GPG commit signing is required for this repository! Please"
+      log "configure your repository with the following command:"
+      log "" # prefixed-newline
+      log "    git config --local user.signingkey <GPG_KEY_ID>"
+      log "" # prefixed-newline
+      log "==============================================================="
+    fi
+    log "Signature exists: user.signingkey=$(git config --get user.signingkey)"
+  fi
+}
+
 update_npm_dependencies() {
   # Only run if changing branches and not performing the initial `git clone`
   if [ $CKOUT_TYPE_FLAG == 1 ] && [ $IS_CLONING == false ]; then
@@ -34,4 +56,5 @@ update_npm_dependencies() {
   fi
 }
 
+config_git_commit_signing
 update_npm_dependencies
