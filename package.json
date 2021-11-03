@@ -1,7 +1,7 @@
 {
     "name": "eslint-plugin-testcafe-community",
-    "version": "1.0.0-autoversioned",
-    "description": "Eslint rules for testcafe, from the testcafe community",
+    "version": "0.0.0-semantically-versioned",
+    "description": "ESLint rules & globals for TestCafe, from the TestCafe community",
     "main": "dist/lib/index.js",
     "files": [
         "dist/**",
