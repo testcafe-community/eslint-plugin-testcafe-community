@@ -14,6 +14,16 @@ everyone time!
 -   Use latest npm version via `nvm install-latest-npm`
 -   Recommend VSCode & the extensions: ESLint, Git Graph, GitHub Markdown
     Preview.
+-   Upon `clone`, this project will be configured to require GPG signatures for
+    commits. You will need to
+    [create a GPG key](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key)
+    with your validated GitHub email address and configure `git` to use it with
+    the following command:
+
+        ```sh
+        # REF: https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key
+        git config --local user.signingkey <GPG_KEY_ID>
+        ```
 
 ## Guidelines
 
