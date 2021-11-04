@@ -13,14 +13,20 @@ jobs:
     env:
       node-version: 16.x
     steps:
-      - uses: actions/checkout@v2
+      - name: git checkout HEAD
+        uses: actions/checkout@v2
+
       - name: Use Node.js ${{ env.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node-version }}
           cache: 'npm'
-      - run: npm ci --prefer-offline --no-fund --no-audit
-      - run: npm run lint
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Lint
+        run: npm run lint
 
 
   lint-commits:
@@ -33,13 +39,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - name: Use Node.js ${{ env.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node-version }}
           cache: 'npm'
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-fund --no-audit
+
       - name: PR commits check
         if: ${{ github.event_name == 'pull_request' }}
         run: npx commitlint --verbose
@@ -53,16 +62,23 @@ jobs:
     env:
         node-version: 16.x
     steps:
-      - uses: actions/checkout@v2
+      - name: git checkout HEAD
+        uses: actions/checkout@v2
+
       - name: Use Node.js ${{ env.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node-version }}
           cache: 'npm'
 
-      - run: npm ci --prefer-offline --no-fund --no-audit
-      - run: npm run build --if-present
-      - run: npm run test:unit
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Run build
+        run: npm run build --if-present
+
+      - name: Run unit-tests
+        run: npm run test:unit
 
       - name: Upload bundle
         uses: actions/upload-artifact@v2.2.4
@@ -80,19 +96,26 @@ jobs:
       matrix:
         node-version: [12.x, 14.x, 16.x]
     steps:
-      - uses: actions/checkout@v2
+      - name: git checkout HEAD
+        uses: actions/checkout@v2
+
       - name: Use Node.js ${{ env.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node-version }}
           cache: 'npm'
+
       - name: Download bundle
         uses: actions/download-artifact@v2
         with:
           name: dist-bundle
           path: dist/
-      - run: npm ci --prefer-offline --no-fund --no-audit
-      - run: npm run test:plugin
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Run plugin tests
+        run: npm run test:plugin
 
 
   release:
@@ -102,18 +125,25 @@ jobs:
       - integration
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: git checkout HEAD
+        uses: actions/checkout@v2
+
       - uses: actions/setup-node@v2
         with:
           node-version: 16
           cache: 'npm'
+
       - name: Download bundle
         uses: actions/download-artifact@v2
         with:
           name: dist-bundle
           path: dist/
-      - run: npm ci --prefer-offline --no-fund --no-audit
-      - run: npx semantic-release
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Run semantic-release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
