@@ -2,10 +2,7 @@
  * @fileoverview easy import file to grab all rules in folder
  * @author codejedi365
  */
-import type {
-    RuleListener,
-    RuleModule
-} from "@typescript-eslint/experimental-utils/dist/ts-eslint";
+import type { TestCafeLint } from "../globals";
 
 // Add Import for any new rules to this list with camelCase
 import noDebug from "./no-debug";
@@ -16,9 +13,7 @@ import missingExpect from "./missing-expect";
 
 // Add export entry to this object for rule definition to be recognized
 export default {
-    get rules(): {
-        [key: string]: RuleModule<string, unknown[], RuleListener>;
-    } {
+    get rules(): TestCafeLint.Rules {
         return {
             "missing-expect": missingExpect,
             "no-debug": noDebug,

@@ -2,6 +2,7 @@ import { access, readdir } from "fs-extra";
 import { resolve } from "path";
 import rulebook from "../../lib/rules";
 import { configs } from "../../lib";
+import type { TestCafeLint } from "../../lib/globals";
 
 let rulesSpy: jest.SpyInstance;
 
@@ -14,7 +15,7 @@ afterEach(() => {
 });
 
 describe("Rule Definitions", () => {
-    const ruleNames = Object.keys(rulebook.rules);
+    const ruleNames = Object.keys(rulebook.rules) as TestCafeLint.RuleName[];
 
     it("should export at least one rule", () => {
         expect(ruleNames.length).toBeGreaterThan(0);
