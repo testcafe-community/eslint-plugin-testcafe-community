@@ -1,10 +1,9 @@
-import { promises as fsPromises } from "fs";
+import { access, readdir } from "fs-extra";
 import { resolve } from "path";
 import rulebook from "../../lib/rules";
 import { configs } from "../../lib";
-import "jest-extended";
+import type { TestCafeLint } from "../../lib/globals";
 
-const fs = fsPromises;
 let rulesSpy: jest.SpyInstance;
 
 beforeEach(() => {
@@ -16,29 +15,39 @@ afterEach(() => {
 });
 
 describe("Rule Definitions", () => {
+    const ruleNames = Object.keys(rulebook.rules) as TestCafeLint.RuleName[];
+
     it("should export at least one rule", () => {
-        expect(Object.keys(rulebook.rules).length).toBeGreaterThan(0);
+        expect(ruleNames.length).toBeGreaterThan(0);
     });
 
     it("should include all rule defintions", async () => {
-        const allFilesInRulesDir = await fs.readdir(
+        const allFilesInRulesDir = await readdir(
             resolve(__dirname, "..", "..", "lib", "rules")
         );
         const allRuleFiles = allFilesInRulesDir.filter((filename) =>
             /(.*(?<!^index)\.ts)$/.test(filename)
         );
-        expect(Object.keys(rulebook.rules)).toBeArrayOfSize(
-            allRuleFiles.length
-        );
+        expect(ruleNames).toBeArrayOfSize(allRuleFiles.length);
     });
 
-    it.each(Object.keys(rulebook.rules))(
-        "%s should export required fields",
-        (ruleName) => {
-            const rule = rulebook.rules[ruleName];
-            expect(rule).toHaveProperty("create", expect.any(Function));
-            expect(rule.meta.docs?.url).not.toBeEmpty();
-            expect(rule.meta.docs?.description).not.toBeEmpty();
+    it.each(ruleNames)("%s should export required fields", (ruleName) => {
+        const rule = rulebook.rules[ruleName];
+        expect(rule).toHaveProperty("create", expect.any(Function));
+        expect(rule.meta.docs?.url).not.toBeEmpty();
+        expect(rule.meta.docs?.description).not.toBeEmpty();
+    });
+
+    it.each(ruleNames)(
+        "%s should have a documentation file (docs/rules/ruleName.md)",
+        async (ruleName) => {
+            const ruleDocFile = resolve(
+                process.cwd(),
+                "docs",
+                "rules",
+                `${ruleName}.md`
+            );
+            await expect(access(ruleDocFile)).toResolve();
         }
     );
 });
@@ -57,11 +66,11 @@ describe("recommended config", () => {
 
     it("should include the recommended rules from this plugin", () => {
         expect(configs.recommended.rules).toEqual({
-            "testcafe-community/expectExpect": "error",
-            "testcafe-community/noDebug": "error",
-            "testcafe-community/noIdenticalTitle": "error",
-            "testcafe-community/noOnly": "error",
-            "testcafe-community/noSkip": "warn"
+            "testcafe-community/missing-expect": "error",
+            "testcafe-community/no-debug": "error",
+            "testcafe-community/no-disabled-tests": "warn",
+            "testcafe-community/no-duplicate-titles": "error",
+            "testcafe-community/no-focused-tests": "error"
         });
     });
 

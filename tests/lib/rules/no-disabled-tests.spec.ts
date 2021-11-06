@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don&#39;t allow test.skip to be added to the repository
+ * @fileoverview Prevent tests from being disabled by `fixture.skip()` or `test.skip()` and forgotten.
  * @author Ben Monro
  */
 
@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 import resolveFrom from "resolve-from";
 import { TSESLint } from "@typescript-eslint/experimental-utils";
-import rule from "../../../lib/rules/no-skip";
+import rule from "../../../lib/rules/no-disabled-tests";
 
 //------------------------------------------------------------------------------
 // Tests
@@ -19,9 +19,12 @@ const ruleTester = new TSESLint.RuleTester({
     parserOptions: { ecmaVersion: 8 }
 });
 
-ruleTester.run("no-skip", rule, {
-    valid: [`test("foo", () => { })`, "fixture`foo`", "fixture`foo`.page"],
-
+ruleTester.run("no-disabled-tests", rule, {
+    valid: [
+        `test("foo", async () => { })`,
+        "fixture`foo`",
+        "fixture`foo`.page('http://www.example.com/')"
+    ],
     invalid: [
         {
             code: `test.skip("foo", async t => {
@@ -29,7 +32,7 @@ ruleTester.run("no-skip", rule, {
             })`,
             errors: [
                 {
-                    messageId: "noSkip"
+                    messageId: "no-disabled-tests"
                 }
             ]
         },
@@ -37,48 +40,28 @@ ruleTester.run("no-skip", rule, {
             code: `
             fixture \`foo\`
                 .page("http://www.google.com")
-                .skip`,
-            errors: [
-                {
-                    messageId: "noSkip"
-                }
-            ]
+                .skip
+            `,
+            errors: [{ messageId: "no-disabled-tests" }]
         },
         {
             code: `
             fixture \`foo\`
                 .page\`http://www.google.com\`
                 .skip`,
-            errors: [
-                {
-                    messageId: "noSkip"
-                }
-            ]
+            errors: [{ messageId: "no-disabled-tests" }]
         },
         {
             code: "fixture.skip`foo`",
-            errors: [
-                {
-                    messageId: "noSkip"
-                }
-            ]
+            errors: [{ messageId: "no-disabled-tests" }]
         },
         {
             code: "fixture`foo`.skip",
-            errors: [
-                {
-                    messageId: "noSkip"
-                }
-            ]
+            errors: [{ messageId: "no-disabled-tests" }]
         },
-
         {
             code: "fixture.skip(`foo`)",
-            errors: [
-                {
-                    messageId: "noSkip"
-                }
-            ]
+            errors: [{ messageId: "no-disabled-tests" }]
         }
     ]
 });

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don't allow test.skip to be added to the repository
+ * @fileoverview Don't allow a single test or fixture to take all the focus.
  * @author Ben Monro
  */
 
@@ -11,29 +11,32 @@ import { createRule } from "../create-rule";
 //------------------------------------------------------------------------------
 
 export default createRule({
-    name: __filename,
     defaultOptions: [],
+    name: __filename,
     meta: {
         messages: {
-            noSkip: "Do not use the `.skip` hook."
+            "no-focused-tests": "Unexpected focused test.",
+            // TODO
+            "no-focused-fixtures": "Unexpected focused fixture."
         },
         type: "problem",
         docs: {
             description:
-                "Don't allow `test.skip` or `fixture.skip` to be added to the repository",
-            recommended: "warn"
+                "Don't allow a single test or fixture to take all the focus.",
+            recommended: "error"
         },
         schema: []
     },
 
     create(context) {
         return {
-            "MemberExpression[property.name='skip']": (
+            "MemberExpression[property.name='only']": (
                 node: MemberExpression
             ) => {
+                // TODO: Detect fixture vs. a test with the `.only()`
                 context.report({
                     node: node.property,
-                    messageId: "noSkip"
+                    messageId: "no-focused-tests"
                 });
             }
         };

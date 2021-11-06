@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don&#39;t allow test.only to be added to the repository
+ * @fileoverview Don't allow a single test or fixture to take all the focus.
  * @author Ben Monro
  */
 
@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 import resolveFrom from "resolve-from";
 import { TSESLint } from "@typescript-eslint/experimental-utils";
-import rule from "../../../lib/rules/no-only";
+import rule from "../../../lib/rules/no-focused-tests";
 
 //------------------------------------------------------------------------------
 // Tests
@@ -18,7 +18,7 @@ const ruleTester = new TSESLint.RuleTester({
     parser: resolveFrom(require.resolve("eslint"), "espree"),
     parserOptions: { ecmaVersion: 8 }
 });
-ruleTester.run("no-only", rule, {
+ruleTester.run("no-focused-tests", rule, {
     valid: [`test("foo", () => { })`, "fixture`foo`"],
 
     invalid: [
@@ -26,11 +26,7 @@ ruleTester.run("no-only", rule, {
             code: `test.only("foo", async t => {
                 await t.click(Selector(".foo"))
             })`,
-            errors: [
-                {
-                    messageId: "noOnly"
-                }
-            ]
+            errors: [{ messageId: "no-focused-tests" }]
         },
 
         {
@@ -38,38 +34,22 @@ ruleTester.run("no-only", rule, {
             fixture \`foo\`
                 .page("http://www.google.com")
                 .only`,
-            errors: [
-                {
-                    messageId: "noOnly"
-                }
-            ]
+            errors: [{ messageId: "no-focused-tests" }]
         },
         {
             code: `
             fixture \`foo\`
                 .page\`http://www.google.com\`
                 .only`,
-            errors: [
-                {
-                    messageId: "noOnly"
-                }
-            ]
+            errors: [{ messageId: "no-focused-tests" }]
         },
         {
             code: "fixture.only`foo`",
-            errors: [
-                {
-                    messageId: "noOnly"
-                }
-            ]
+            errors: [{ messageId: "no-focused-tests" }]
         },
         {
             code: "fixture`foo`.only",
-            errors: [
-                {
-                    messageId: "noOnly"
-                }
-            ]
+            errors: [{ messageId: "no-focused-tests" }]
         }
     ]
 });

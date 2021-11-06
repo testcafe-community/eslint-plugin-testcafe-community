@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don't allow test.only to be added to the repository
+ * @fileoverview Prevent tests from being disabled by `fixture.skip()` or `test.skip()` and forgotten.
  * @author Ben Monro
  */
 
@@ -11,29 +11,32 @@ import { createRule } from "../create-rule";
 //------------------------------------------------------------------------------
 
 export default createRule({
-    defaultOptions: [],
     name: __filename,
+    defaultOptions: [],
     meta: {
         messages: {
-            noOnly: "Do not use the `.only` hook."
+            "no-disabled-tests": "Skipped test case.",
+            // TODO
+            "no-disabled-test-suites": "Skipped test fixture."
         },
         type: "problem",
         docs: {
             description:
-                "Don't allow `test.only` to be added to the repository",
-            recommended: "error"
+                "Prevent tests from being disabled by `fixture.skip()` or `test.skip()` and forgotten.",
+            recommended: "warn"
         },
         schema: []
     },
 
     create(context) {
+        // TODO: Detect fixture.skip vs test.skip
         return {
-            "MemberExpression[property.name='only']": (
+            "MemberExpression[property.name='skip']": (
                 node: MemberExpression
             ) => {
                 context.report({
                     node: node.property,
-                    messageId: "noOnly"
+                    messageId: "no-disabled-tests"
                 });
             }
         };
