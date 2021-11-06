@@ -81,7 +81,6 @@
         "remark-preset-prettier": "^0.5.1",
         "resolve-from": "^5.0.0",
         "semantic-release": "^18.0.0",
-        "semver": "^7.3.5",
         "ts-jest": "^27.0.5",
         "ts-loader": "^9.2.6",
         "ts-node": "^10.2.1",
@@ -91,7 +90,8 @@
         "webpack-node-externals": "^3.0.0"
     },
     "dependencies": {
-        "@typescript-eslint/experimental-utils": "^5.2.0"
+        "@typescript-eslint/experimental-utils": "^5.2.0",
+        "semver": "^7.3.5"
     },
     "peerDependencies": {
         "eslint": "^7.0.0 || ^8.0.0"
