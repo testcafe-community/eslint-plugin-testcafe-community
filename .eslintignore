@@ -1,10 +1,27 @@
-# Non-linted files
-LICENSE
+# Start by ignoring all files
+*
+# Except supported file extensions & hidden counterparts
+!*.ts
+!*.js
+!*.md
+!.*.ts
+!.*.js
+# enable directory parsing
+!*/
 
-# generated files/directories
-dist/**
-coverage/**
+# But still don't lint any matches in:
+# directories
+.git/
+.vscode/
+__cache__/
+dist/
+coverage/
+node_modules/
+
+# or these specific files:
+*.json
 package-lock.json
 
-# deliberately out of standard
-example/**
+# files deliberately out of standard
+example/**/*.test.ts
+example/**/*.test.js

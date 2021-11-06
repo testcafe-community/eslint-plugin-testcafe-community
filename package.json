@@ -37,7 +37,7 @@
         "format": "npm run lint -- --fix",
         "format:file": "npm run lint:file -- --fix",
         "lint": "npm run lint:file -- . --",
-        "lint:file": "eslint --ext ts,js,md",
+        "lint:file": "eslint",
         "test": "run-s --silent test:*",
         "test:unit": "jest --selectProjects UNIT",
         "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
