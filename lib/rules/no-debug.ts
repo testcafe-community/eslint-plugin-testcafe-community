@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don't allow debug() to be committed to the repository.
+ * @fileoverview Prevent permanent use of `t.debug()`.
  * @author Ben Monro
  */
 import type {
@@ -18,11 +18,11 @@ export default createRule({
     meta: {
         type: "problem",
         messages: {
-            noDebugMessage: "Do not use the `.debug` action."
+            "no-debug": "Unexpected `t.debug()` expression."
         },
         docs: {
             description:
-                "Don't allow `t.debug()` to be committed to the repository. ",
+                "`t.debug()` should not exist permanently, use only for debugging of a test failure.",
             recommended: "error"
         },
         schema: []
@@ -35,7 +35,7 @@ export default createRule({
             ) => {
                 context.report({
                     node: node.callee.property,
-                    messageId: "noDebugMessage"
+                    messageId: "no-debug"
                 });
             }
         };

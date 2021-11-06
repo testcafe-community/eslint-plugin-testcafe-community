@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don't allow multiple test functions to have the same name.
+ * @fileoverview Don't allow duplicate titles for tests.
  * @author Ben Monro
  * @author codejedi365
  */
@@ -56,10 +56,10 @@ export default createRule({
     meta: {
         type: "problem",
         messages: {
-            noIdenticalTitles: "Don't use identical titles for your tests"
+            "no-duplicate-titles": "All test case titles should be unique."
         },
         docs: {
-            description: "Don't use identical titles for your tests",
+            description: "All test case titles should be unique.",
             recommended: "error"
         },
         schema: []
@@ -124,7 +124,7 @@ export default createRule({
             }
         };
 
-        const evaluateForIdenticalTitles = () => {
+        const evaluateForDuplicateTitles = () => {
             const duplicateNamedNodes = Object.values(testTitles).reduce(
                 (
                     result: CallExpressionArgument[],
@@ -139,7 +139,7 @@ export default createRule({
             duplicateNamedNodes.forEach((testTitleNode) => {
                 context.report({
                     node: testTitleNode,
-                    messageId: "noIdenticalTitles"
+                    messageId: "no-duplicate-titles"
                 });
             });
         };
@@ -167,7 +167,7 @@ export default createRule({
             [`${testFnCallExpression}[callee.type=MemberExpression]:exit`]:
                 unknownFnCallEXIT,
             "Program:exit": () => {
-                evaluateForIdenticalTitles();
+                evaluateForDuplicateTitles();
             }
         };
     }

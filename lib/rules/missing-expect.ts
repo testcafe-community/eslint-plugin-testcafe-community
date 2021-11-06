@@ -31,10 +31,10 @@ export default createRule({
     meta: {
         type: "problem",
         messages: {
-            missingExpect: "Please ensure your test has at least one expect"
+            "missing-expect": "Please ensure your test has at least one expect."
         },
         docs: {
-            description: "Ensure tests have at least one expect",
+            description: "Ensure tests have at least one expect.",
             recommended: "error"
         },
         schema: []
@@ -66,7 +66,7 @@ export default createRule({
 
         const validateExpectWasFound = (node: CallExpression) => {
             if (!hasExpect) {
-                context.report({ node, messageId: "missingExpect" });
+                context.report({ node, messageId: "missing-expect" });
             }
             resetFlags();
         };

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Don&#39;t allow debug() to be committed to the repository.
+ * @fileoverview Prevent permanent use of `t.debug()`.
  * @author Ben Monro
  */
 
@@ -24,15 +24,10 @@ ruleTester.run("no-debug", rule, {
         `t.debugger()`,
         `t.typeText(Selector(".debug"), "Hello")`
     ],
-
     invalid: [
         {
             code: "t.debug()",
-            errors: [
-                {
-                    messageId: "noDebugMessage"
-                }
-            ]
+            errors: [{ messageId: "no-debug" }]
         },
         {
             code: `
@@ -42,24 +37,15 @@ ruleTester.run("no-debug", rule, {
                 .debug()
             })
             `,
-            errors: [
-                {
-                    messageId: "noDebugMessage"
-                }
-            ]
+            errors: [{ messageId: "no-debug" }]
         },
-
         {
             code: `
             test('should do stuff', async (t) => {
                 t.debug()
             })
             `,
-            errors: [
-                {
-                    messageId: "noDebugMessage"
-                }
-            ]
+            errors: [{ messageId: "no-debug" }]
         },
         {
             code: `
@@ -69,11 +55,7 @@ ruleTester.run("no-debug", rule, {
                 .debug()
             })
             `,
-            errors: [
-                {
-                    messageId: "noDebugMessage"
-                }
-            ]
+            errors: [{ messageId: "no-debug" }]
         }
     ]
 });

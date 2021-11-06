@@ -1,10 +1,16 @@
+/**
+ * @fileoverview Don't allow duplicate titles for tests.
+ * @author Ben Monro
+ * @author codejedi365
+ */
+
 import type { CallExpression } from "@typescript-eslint/types/dist/ast-spec";
 import {
     TSESLint,
     AST_NODE_TYPES
 } from "@typescript-eslint/experimental-utils";
 import resolveFrom from "resolve-from";
-import rule from "../../../lib/rules/no-identical-title";
+import rule from "../../../lib/rules/no-duplicate-titles";
 import { determineCodeLocation } from "../../../lib/utils/locator";
 
 jest.mock("../../../lib/utils/locator", () => {
@@ -31,7 +37,7 @@ const ruleTester = new TSESLint.RuleTester({
 //------------------------------------------------------------------------------
 
 describe("ESLint Code Snippets", () => {
-    ruleTester.run("noIdenticalTitles", rule, {
+    ruleTester.run("no-duplicate-titles", rule, {
         valid: [
             `
             test("my test", async t => {});
@@ -100,8 +106,8 @@ describe("ESLint Code Snippets", () => {
                     test("my test", async t => {});
                 `,
                 errors: [
-                    { messageId: "noIdenticalTitles" },
-                    { messageId: "noIdenticalTitles" }
+                    { messageId: "no-duplicate-titles" },
+                    { messageId: "no-duplicate-titles" }
                 ]
             },
             {
@@ -110,8 +116,8 @@ describe("ESLint Code Snippets", () => {
                     test.page("./foo")("my test", async t => {});
                 `,
                 errors: [
-                    { messageId: "noIdenticalTitles" },
-                    { messageId: "noIdenticalTitles" }
+                    { messageId: "no-duplicate-titles" },
+                    { messageId: "no-duplicate-titles" }
                 ]
             },
             {
@@ -120,8 +126,8 @@ describe("ESLint Code Snippets", () => {
                     test.page("./foo")("my test", async t => {});
                 `,
                 errors: [
-                    { messageId: "noIdenticalTitles" },
-                    { messageId: "noIdenticalTitles" }
+                    { messageId: "no-duplicate-titles" },
+                    { messageId: "no-duplicate-titles" }
                 ]
             },
             {
@@ -130,8 +136,8 @@ describe("ESLint Code Snippets", () => {
                     test.skip("my test", async t => {});
                 `,
                 errors: [
-                    { messageId: "noIdenticalTitles" },
-                    { messageId: "noIdenticalTitles" }
+                    { messageId: "no-duplicate-titles" },
+                    { messageId: "no-duplicate-titles" }
                 ]
             },
             {
@@ -140,8 +146,8 @@ describe("ESLint Code Snippets", () => {
                     test.only.page("./foo")("my test", async t => {});
                 `,
                 errors: [
-                    { messageId: "noIdenticalTitles" },
-                    { messageId: "noIdenticalTitles" }
+                    { messageId: "no-duplicate-titles" },
+                    { messageId: "no-duplicate-titles" }
                 ]
             },
             {
@@ -152,8 +158,8 @@ describe("ESLint Code Snippets", () => {
                     })("my test", async t => {});
                 `,
                 errors: [
-                    { messageId: "noIdenticalTitles" },
-                    { messageId: "noIdenticalTitles" }
+                    { messageId: "no-duplicate-titles" },
+                    { messageId: "no-duplicate-titles" }
                 ]
             },
             {
@@ -167,8 +173,8 @@ describe("ESLint Code Snippets", () => {
                     })("my test", async t => {});
                 `,
                 errors: [
-                    { messageId: "noIdenticalTitles" },
-                    { messageId: "noIdenticalTitles" }
+                    { messageId: "no-duplicate-titles" },
+                    { messageId: "no-duplicate-titles" }
                 ]
             }
         ]
@@ -180,7 +186,7 @@ describe("Error Handling", () => {
         jest.clearAllMocks();
     });
     const ruleFns = rule.create({
-        id: "noIdenticalTitlesError",
+        id: "no-duplicate-titles-error",
         options: [],
         parserOptions: {},
         parserPath: resolveFrom(require.resolve("eslint"), "espree"),

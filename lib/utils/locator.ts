@@ -4,10 +4,10 @@
  */
 
 import type {
+    BaseNode,
     CallExpression,
-    MemberExpression,
     Identifier,
-    BaseNode
+    MemberExpression
 } from "@typescript-eslint/types/dist/ast-spec";
 import { AST_NODE_TYPES } from "@typescript-eslint/experimental-utils";
 import {

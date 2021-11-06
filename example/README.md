@@ -41,11 +41,12 @@ The journey test [`example.test.ts`](./example.test.ts) is expected to have at
 least one example of all invalid configurations according to the
 `testcafe-community` ruleset. This is designed to exemplify how the
 `testcafe-community` plugin will identify the poor programming patterns in
-TestCafe test suites.
+TestCafe test suites. [`example.test.js`](./example.test.js) is an equivalent
+Node.js / CommonJS implementation of the TS journey test.
 
 ## Integration
 
-See [`example.serial-test.ts`](../tests/example.serial-test.ts) for the higher
-level integration test which relies upon this example package configuration. The
-`jest` test runner will evaluate the validity of the testcafe-community plugin's
-integration with ESLint and its effectiveness.
+See [`pkglint.integration-test.ts`](../tests/pkglint.integration-test.ts) for
+the higher level integration test which relies upon this example package
+configuration. The `jest` test runner will evaluate the validity of the
+testcafe-community plugin's integration with ESLint and its effectiveness.

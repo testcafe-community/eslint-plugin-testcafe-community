@@ -1,9 +1,14 @@
-# Don't allow an identical test title to be committed to the repository. (no-identical-title)
+# `no-duplicate-titles`
+
+_Don't allow duplicate titles for tests._
 
 ## Rule Details
 
 This rule aims to prevent duplicate test names to exist. All tests should have
-an unique name across the entire repository.
+an unique name across the entire repository. It becomes difficult to identify
+where a failing test is implemented with the default output from TestCafe
+already and duplicate names would be even worse. This rule will catch incomplete
+copy/paste, then edit errors by your developers.
 
 Examples of **incorrect** code for this rule:
 
@@ -34,8 +39,7 @@ test("should see button text change after clicked", async (t) => {
 
 ## When Not To Use It
 
-If you don't care if people add tests with the same name to your source code
-repository.
+When it is not problematic to have multiple tests with the same name.
 
 ## Further Reading
 

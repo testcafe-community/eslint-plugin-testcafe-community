@@ -312,20 +312,20 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report an expectExpect rule error", () => {
+            it("should report an missing-expect rule error", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/expectExpect",
+                                    ruleId: "testcafe-community/missing-expect",
                                     severity: 2,
-                                    message: "Please ensure your test has at least one expect",
+                                    message: "Please ensure your test has at least one expect.",
                                     line: 17,
                                     column: 1,
                                     nodeType: "CallExpression",
-                                    messageId: "missingExpect",
+                                    messageId: "missing-expect",
                                     endLine: 20,
                                     endColumn: 3
                                 }) as Linter.LintMessage
@@ -335,20 +335,20 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report a noDebug rule error", () => {
+            it("should report a no-debug rule error", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noDebug",
+                                    ruleId: "testcafe-community/no-debug",
                                     severity: 2,
-                                    message: "Do not use the `.debug` action.",
+                                    message: "Unexpected `t.debug()` expression.",
                                     line: 19,
                                     column: 7,
                                     nodeType: "Identifier",
-                                    messageId: "noDebugMessage",
+                                    messageId: "no-debug",
                                     endLine: 19,
                                     endColumn: 12
                                 }) as Linter.LintMessage
@@ -358,31 +358,31 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report a noIdenticalTitle rule error", () => {
+            it("should report a no-duplicate-titles rule error", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noIdenticalTitle",
+                                    ruleId: "testcafe-community/no-duplicate-titles",
                                     severity: 2,
-                                    message: "Don't use identical titles for your tests",
+                                    message: "All test case titles should be unique.",
                                     line: 11,
                                     column: 11,
                                     nodeType: "Literal",
-                                    messageId: "noIdenticalTitles",
+                                    messageId: "no-duplicate-titles",
                                     endLine: 11,
                                     endColumn: 48
                                 }) as Linter.LintMessage,
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noIdenticalTitle",
+                                    ruleId: "testcafe-community/no-duplicate-titles",
                                     severity: 2,
-                                    message: "Don't use identical titles for your tests",
+                                    message: "All test case titles should be unique.",
                                     line: 17,
                                     column: 11,
                                     nodeType: "Literal",
-                                    messageId: "noIdenticalTitles",
+                                    messageId: "no-duplicate-titles",
                                     endLine: 17,
                                     endColumn: 48
                                 }) as Linter.LintMessage
@@ -392,20 +392,20 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report a noOnly rule error", () => {
+            it("should report a no-focused-tests rule error", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noOnly",
+                                    ruleId: "testcafe-community/no-focused-tests",
                                     severity: 2,
-                                    message: "Do not use the `.only` hook.",
+                                    message: "Unexpected focused test.",
                                     line: 11,
                                     column: 6,
                                     nodeType: "Identifier",
-                                    messageId: "noOnly",
+                                    messageId: "no-focused-tests",
                                     endLine: 11,
                                     endColumn: 10
                                 }) as Linter.LintMessage
@@ -415,20 +415,20 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report a noSkip rule warning", () => {
+            it("should report a no-disabled-tests rule warning", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noSkip",
+                                    ruleId: "testcafe-community/no-disabled-tests",
                                     severity: 1,
-                                    message: "Do not use the `.skip` hook.",
+                                    message: "Skipped test case.",
                                     line: 17,
                                     column: 6,
                                     nodeType: "Identifier",
-                                    messageId: "noSkip",
+                                    messageId: "no-disabled-tests",
                                     endLine: 17,
                                     endColumn: 10
                                 }) as Linter.LintMessage
@@ -457,20 +457,20 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report an expectExpect rule error", () => {
+            it("should report an missing-expect rule error", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/expectExpect",
+                                    ruleId: "testcafe-community/missing-expect",
                                     severity: 2,
-                                    message: "Please ensure your test has at least one expect",
+                                    message: "Please ensure your test has at least one expect.",
                                     line: 17,
                                     column: 1,
                                     nodeType: "CallExpression",
-                                    messageId: "missingExpect",
+                                    messageId: "missing-expect",
                                     endLine: 20,
                                     endColumn: 3
                                 }) as Linter.LintMessage
@@ -480,20 +480,20 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report a noDebug rule error", () => {
+            it("should report a no-debug rule error", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noDebug",
+                                    ruleId: "testcafe-community/no-debug",
                                     severity: 2,
-                                    message: "Do not use the `.debug` action.",
+                                    message: "Unexpected `t.debug()` expression.",
                                     line: 19,
                                     column: 7,
                                     nodeType: "Identifier",
-                                    messageId: "noDebugMessage",
+                                    messageId: "no-debug",
                                     endLine: 19,
                                     endColumn: 12
                                 }) as Linter.LintMessage
@@ -503,31 +503,31 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report a noIdenticalTitle rule error", () => {
+            it("should report a no-duplicate-titles rule error", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noIdenticalTitle",
+                                    ruleId: "testcafe-community/no-duplicate-titles",
                                     severity: 2,
-                                    message: "Don't use identical titles for your tests",
+                                    message: "All test case titles should be unique.",
                                     line: 11,
                                     column: 11,
                                     nodeType: "Literal",
-                                    messageId: "noIdenticalTitles",
+                                    messageId: "no-duplicate-titles",
                                     endLine: 11,
                                     endColumn: 48
                                 }) as Linter.LintMessage,
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noIdenticalTitle",
+                                    ruleId: "testcafe-community/no-duplicate-titles",
                                     severity: 2,
-                                    message: "Don't use identical titles for your tests",
+                                    message: "All test case titles should be unique.",
                                     line: 17,
                                     column: 11,
                                     nodeType: "Literal",
-                                    messageId: "noIdenticalTitles",
+                                    messageId: "no-duplicate-titles",
                                     endLine: 17,
                                     endColumn: 48
                                 }) as Linter.LintMessage
@@ -537,20 +537,20 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report a noOnly rule error", () => {
+            it("should report a no-focused-tests rule error", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noOnly",
+                                    ruleId: "testcafe-community/no-focused-tests",
                                     severity: 2,
-                                    message: "Do not use the `.only` hook.",
+                                    message: "Unexpected focused test.",
                                     line: 11,
                                     column: 6,
                                     nodeType: "Identifier",
-                                    messageId: "noOnly",
+                                    messageId: "no-focused-tests",
                                     endLine: 11,
                                     endColumn: 10
                                 }) as Linter.LintMessage
@@ -560,20 +560,20 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 );
             });
 
-            it("should report a noSkip rule warning", () => {
+            it("should report a no-disabled-tests rule warning", () => {
                 expect(lintResults).toEqual<ESLint.LintResult[]>(
                     expect.arrayContaining<ESLint.LintResult>([
                         expect.objectContaining<Partial<ESLint.LintResult>>({
                             filePath: targetFile,
                             messages: expect.arrayContaining<Linter.LintMessage>([
                                 expect.objectContaining<Partial<Linter.LintMessage>>({
-                                    ruleId: "testcafe-community/noSkip",
+                                    ruleId: "testcafe-community/no-disabled-tests",
                                     severity: 1,
-                                    message: "Do not use the `.skip` hook.",
+                                    message: "Skipped test case.",
                                     line: 17,
                                     column: 6,
                                     nodeType: "Identifier",
-                                    messageId: "noSkip",
+                                    messageId: "no-disabled-tests",
                                     endLine: 17,
                                     endColumn: 10
                                 }) as Linter.LintMessage
