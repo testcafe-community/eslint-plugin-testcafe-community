@@ -10,8 +10,12 @@ module.exports = {
             "semantic-release-npm-deprecate-old-versions",
             {
                 rules: [
-                    "supportLatest",
-                    "supportPreReleaseIfNotReleased",
+                    {
+                        rule: "supportLatest",
+                        options: {
+                            numberOfMajorReleases: 2
+                        }
+                    },
                     "deprecateAll"
                 ]
             }
