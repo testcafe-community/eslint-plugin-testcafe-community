@@ -1,10 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: 'FEAT: (short-title)'
+title: "FEAT: (short-title)"
 labels: enhancement
-assignees: 'codejedi365'
-
+assignees: "codejedi365"
 ---
 
 <!--

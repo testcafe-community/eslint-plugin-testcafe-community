@@ -34,7 +34,7 @@ solved -->
    git checkout $(git merge-base master <fork_name/branch>)
    ```
 
-2. Grab relevant test files & pkgs 
+2. Grab relevant test files & pkgs
 
     ```sh
     git checkout <fork_name/branch> -- path/to/testfile(s)

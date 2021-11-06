@@ -9,7 +9,7 @@ const invalidCodeBlockRules = {
 
 module.exports = {
     root: true,
-    ignorePatterns: ["*.json", "!.*"],
+    ignorePatterns: ["*.json", "!.*", "**/.remarkrc"],
     overrides: [
         {
             files: ["*.ts"],
