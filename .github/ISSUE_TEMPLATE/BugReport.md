@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: 'BUG: (short-title)'
+title: "BUG: (short-title)"
 labels: bug
-assignees: 'codejedi365'
-
+assignees: "codejedi365"
 ---
 
 <!--
@@ -49,22 +48,24 @@ Include logs, screenshots and relevant details -->
 
 ### Your Environment
 
-- Pkg version: <!-- Version in question where bug occurs -->
+-   Pkg version: <!-- Version in question where bug occurs -->
 <!-- _please verify that the bug exists in the latest release_ -->
-- OS: <!-- Operating system you are using -->
-- Env: <!-- Runtime environment & relevant settings -->
-    - NodeJS: <!-- version -->
-    - ESLint: <!-- version -->
-    - TestCafe: <!-- version -->
-    - ESLint Plugins: <!-- Associated packages relevant to bug or environment -->
-    - ESLint Config:
+-   OS: <!-- Operating system you are using -->
+-   Env: <!-- Runtime environment & relevant settings -->
+
+    -   NodeJS: <!-- version -->
+    -   ESLint: <!-- version -->
+    -   TestCafe: <!-- version -->
+    -   ESLint Plugins:
+        <!-- Associated packages relevant to bug or environment -->
+    -   ESLint Config:
 
         ```js
         // .eslintrc
         ```
 
-- Example URL: <!-- Any Links that can be relevant to paint your situation -->
-- Other libraries you are using:
+-   Example URL: <!-- Any Links that can be relevant to paint your situation -->
+-   Other libraries you are using:
 <!-- Relevant libraries that could cause a conflict or you require -->
 
 ### Additional context
