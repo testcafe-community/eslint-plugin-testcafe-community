@@ -4,7 +4,9 @@
  */
 // IMPORTS
 const { resolve, dirname, basename } = require("path");
+const { Z_DEFAULT_COMPRESSION, Z_BEST_SPEED } = require("constants");
 const nodeExternals = require("webpack-node-externals");
+const FileManagerPlugin = require("filemanager-webpack-plugin");
 const thisModule = require("./package.json");
 
 // CONSTANTS
@@ -41,7 +43,31 @@ function buildConfig() {
                 type: "commonjs"
             }
         },
-        plugins: [],
+        plugins: [
+            new FileManagerPlugin({
+                runOnceInWatchMode: true,
+                events: {
+                    onEnd: {
+                        archive: [
+                            {
+                                // Bundle all Docs into a compressed tarball to be included in dist/
+                                source: resolve(pkgDir, "docs"),
+                                destination: resolve(outDir, "docs.tar.gz"),
+                                format: "tar",
+                                options: {
+                                    gzip: true,
+                                    gzipOptions: {
+                                        level: isProduction
+                                            ? Z_DEFAULT_COMPRESSION
+                                            : Z_BEST_SPEED
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            })
+        ],
         module: {
             rules: [
                 {
