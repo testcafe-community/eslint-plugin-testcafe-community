@@ -43,6 +43,7 @@
         "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
         "generate-readme-table": "ts-node -O '{\"module\":\"commonjs\"}' build/generate-readme-table.ts",
         "prepare": "is-ci || husky install",
+        "prepublishOnly": "is-ci && run-s build",
         "watch": "npm run test:unit -- --watch --"
     },
     "devDependencies": {
