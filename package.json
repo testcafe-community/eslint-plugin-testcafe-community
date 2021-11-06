@@ -2,10 +2,10 @@
     "name": "eslint-plugin-testcafe-community",
     "version": "0.0.0-semantically-versioned",
     "description": "ESLint rules & globals for TestCafe, from the TestCafe community",
-    "main": "dist/lib/index.js",
+    "main": "dist/plugin.min.cjs",
+    "types": "dist/plugin.d.ts",
     "files": [
-        "dist/**",
-        "docs/**"
+        "dist/**"
     ],
     "repository": {
         "type": "git",
@@ -31,7 +31,7 @@
         "testcafe"
     ],
     "scripts": {
-        "build": "tsc",
+        "build": "webpack --mode=production --node-env=production",
         "commit": "git commit",
         "commit-retry": "CZ_RETRY=true git commit",
         "format": "npm run lint -- --fix",
@@ -41,8 +41,9 @@
         "test": "run-s --silent test:*",
         "test:unit": "jest --selectProjects UNIT",
         "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
-        "generate-readme-table": "ts-node build/generate-readme-table.ts",
+        "generate-readme-table": "ts-node -O '{\"module\":\"commonjs\"}' build/generate-readme-table.ts",
         "prepare": "is-ci || husky install",
+        "prepublishOnly": "is-ci && run-s build",
         "watch": "npm run test:unit -- --watch --"
     },
     "devDependencies": {
@@ -67,6 +68,7 @@
         "eslint-plugin-jest": "^24.5.0",
         "eslint-plugin-mdx": "^1.15.1",
         "eslint-plugin-prettier": "^4.0.0",
+        "filemanager-webpack-plugin": "^6.1.7",
         "fs-extra": "^10.0.0",
         "husky": "^7.0.2",
         "is-ci": "^3.0.0",
@@ -80,13 +82,17 @@
         "remark-preset-prettier": "^0.5.1",
         "resolve-from": "^5.0.0",
         "semantic-release": "^18.0.0",
-        "semver": "^7.3.5",
         "ts-jest": "^27.0.5",
+        "ts-loader": "^9.2.6",
         "ts-node": "^10.2.1",
-        "typescript": "^4.4.3"
+        "typescript": "^4.4.3",
+        "webpack": "^5.61.0",
+        "webpack-cli": "^4.9.1",
+        "webpack-node-externals": "^3.0.0"
     },
     "dependencies": {
-        "@typescript-eslint/experimental-utils": "^5.2.0"
+        "@typescript-eslint/experimental-utils": "^5.2.0",
+        "semver": "^7.3.5"
     },
     "peerDependencies": {
         "eslint": "^7.0.0 || ^8.0.0"

@@ -1,11 +1,13 @@
 //------------------------------------------------------------------------------
 // Plugin Definition
 //------------------------------------------------------------------------------
+// WARNING: Exports in this file must match ./globals.d.ts in order for
+//   the packed plugin types to coorespond with the exports it provides
 
-import type { Linter } from "eslint";
+import type { TestCafeLint } from "./globals";
 import rulebook from "./rules";
 
-const generateRecommendedConfig = (): Partial<Linter.RulesRecord> => {
+const generateRecommendedConfig = (): Partial<TestCafeLint.RuleRecords> => {
     return Object.entries(rulebook.rules).reduce((memo, [name, rule]) => {
         return !rule.meta.docs
             ? memo
@@ -19,7 +21,7 @@ const generateRecommendedConfig = (): Partial<Linter.RulesRecord> => {
 export const { rules } = rulebook;
 
 export const configs = {
-    get recommended(): Linter.Config {
+    get recommended(): TestCafeLint.Config.Recommended {
         return {
             globals: {
                 fixture: false,

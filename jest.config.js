@@ -17,7 +17,11 @@ module.exports = {
             functions: 100
         }
     },
-    collectCoverageFrom: ["lib/**/*.ts", "index.ts", "!**/node_modules/**"],
+    collectCoverageFrom: [
+        "lib/**/*.ts",
+        "!lib/**/*.d.ts",
+        "!**/node_modules/**"
+    ],
     projects: [
         {
             displayName: "UNIT",
