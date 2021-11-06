@@ -103,13 +103,12 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-      - name: Download bundle
-        uses: actions/download-artifact@v2
-        with:
-          name: dist-bundle
-          path: dist/
-      - run: npm ci --prefer-offline --no-fund --no-audit
-      - run: npx semantic-release
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Run semantic-release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
