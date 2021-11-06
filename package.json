@@ -3,6 +3,7 @@
     "version": "0.0.0-semantically-versioned",
     "description": "ESLint rules & globals for TestCafe, from the TestCafe community",
     "main": "dist/plugin.min.cjs",
+    "types": "dist/plugin.d.ts",
     "files": [
         "dist/**"
     ],

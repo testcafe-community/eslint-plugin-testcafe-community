@@ -63,6 +63,15 @@ function buildConfig() {
                                     }
                                 }
                             }
+                        ],
+                        copy: [
+                            {
+                                source: resolve(pkgDir, "lib", "globals.d.ts"),
+                                destination: resolve(
+                                    outDir,
+                                    basename(thisModule.types)
+                                )
+                            }
                         ]
                     }
                 }
