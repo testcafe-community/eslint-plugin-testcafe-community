@@ -1,10 +1,17 @@
 #!/bin/sh
 [ -z "$LOG_PREFIX" ] && LOG_PREFIX="[.husky/???]"
 
-log() {
-  echo "${LOG_PREFIX} $@"
+# as opposed to echo, interpret C escape sequences properly in all envs
+replay() {
+  printf '%s\n' "$*"
 }
 
+# Print to stdout as messages with a prefix of $LOG_PREFIX
+log() {
+  replay "$@" | awk -v "PREFIX=$LOG_PREFIX" -F '\\\\n' '{print PREFIX " " $1}'
+}
+
+# Print to stderr as messages with a prefix of $LOG_PREFIX
 error() {
-  echo >&2 "${LOG_PREFIX} $@"
+  replay "$@" | awk >&2 -v "PREFIX=$LOG_PREFIX" -F '\\\\n' '{print PREFIX " " $1}'
 }
