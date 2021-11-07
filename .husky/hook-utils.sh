@@ -15,3 +15,10 @@ log() {
 error() {
   replay "$@" | awk >&2 -v "PREFIX=$LOG_PREFIX" -F '\\\\n' '{print PREFIX " " $1}'
 }
+
+# Prints and runs command
+explicit_run_cmd() {
+  cmd="$1"
+  log "$> $cmd"
+  eval "$cmd"
+}
