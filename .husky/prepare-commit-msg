@@ -12,7 +12,7 @@
 COMMIT_MSG_SOURCE="$2" # message | template | merge | squash | commit
 # COMMIT_OBJ_NAME="$3"   # commit object name
 
-if [ "$COMMIT_MSG_SOURCE" == "merge" ]; then
+if [ "$COMMIT_MSG_SOURCE" = "merge" ]; then
   exit 0 # pass on succesfully
 fi
 
@@ -22,7 +22,7 @@ log "Starting commitizen cli for conventional commits..."
 CZ_OPTIONS="--hook"
 cmd="exec </dev/tty && npx git-cz $CZ_OPTIONS || true"
 
-if [ $CZ_RETRY == "true" ]; then
+if [ $CZ_RETRY = "true" ]; then
   CZ_OPTIONS="--retry"
   cmd="npx git-cz --retry || true"
 fi
