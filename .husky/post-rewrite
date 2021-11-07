@@ -7,7 +7,7 @@ export LOG_PREFIX="[.husky/post-rewrite]"
 . "$(dirname "$0")/hook-utils.sh"
 
 # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224
-if [ "$CALLER_CMD" == "rebase" ]; then
+if [ "$CALLER_CMD" = "rebase" ]; then
   log "DETECTED: git-rebase.";
-  $(dirname "$0")/post-merge
+  "$(dirname "$0")"/post-merge
 fi
