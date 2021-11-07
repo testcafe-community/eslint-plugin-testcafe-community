@@ -29,13 +29,16 @@ update_npm_dependencies() {
   fi
 
   if [ "$NEEDS_INSTALL" == true ]; then
-    cmd="npm install --prefer-offline --no-fund --no-audit"
     if ! command -v npm &>/dev/null; then
-      log "NPM not found on \$PATH, however '$cmd' is desired. Please accomplish manually."
-      return
+      error "ERROR: NPM not found on \$PATH, however 'npm install' is desired. Please accomplish manually."
+      return 1
     fi
-    log "$> $cmd"
-    eval "$cmd"
+
+    if ! explicit_run_cmd "npm install --prefer-offline --no-fund --no-audit"; then
+      error "ERROR: Dependency installation failed."
+      error "You will need to perform an install manually to continue."
+      return 1
+    fi
 
     changed_files="$(git diff --name-only --diff-filter=d)"
     if output="$(replay "$changed_files" | grep "package-lock.json")"; then
