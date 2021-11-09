@@ -37,6 +37,60 @@ config_git_commit_signing() {
   fi
 }
 
+activate_nvm_env() {
+  # Only run if changing branches & NVM is installed
+  if ! [ "$CKOUT_TYPE_FLAG" = "1" ]; then
+    return 0 # Abort action
+  fi
+  if ! command -v nvm >/dev/null 2>&1; then
+    return 0 # Abort action
+  fi
+  output=""
+  if ! output=$(nvm use); then
+    if ! replay "$output" | grep --quiet "not yet installed"; then
+      unset output
+      return 0 # Abort action
+    fi
+    VERSION=""
+    VERSION="$(replay "$output" | grep 'nvm install' | sed 's/.*install v([0-9]+\.[0-9]+\.[0-9]+).*/\1/')"
+    # enable user input, git by default runs in non-interactive mode
+    if ! exec </dev/tty; then
+      unset output VERSION
+      return 0 # Abort
+    fi
+    response=""
+    confirmed=false
+    while [ "$confirmed" = "false" ]; do
+      printf '%s' "Would you like to install Node.js ${VERSION} via nvm (Y/n)? "
+      read -r response;
+      if replay "$response" | grep -q -i -E '^\s*(Y|YES|YEP)\s*$'; then  
+        response="install"
+      elif replay "$response" | grep -q -i -E '^\s*(N|NO|NOPE)\s*$'; then
+        response=""
+      else
+        replay >&2 "Invalid response received. Try again."
+        continue
+      fi
+      confirmed=true;
+    done
+    if [ "$response" = "install" ]; then
+      log "Installing Node.js v$VERSION via nvm..."
+      if ! nvm install "$VERSION" --latest-npm; then
+        error "ERROR: nvm's installer failed, see error above."
+        error "Your node version does not match with the expected dev environment version."
+        unset output VERSION response confirmed
+        return 1
+      fi
+      log "node --version = $(node --version)"
+    else
+      error "NODE VERSION MIXMATCH: Expected dev environment Node.js version is not installed."
+      error "Authors expect to contributors to use the Node.js version defined in .nvmrc for development."
+      error "dev at your own risk!"
+    fi
+  fi
+  unset output VERSION response confirmed
+}
+
 update_npm_dependencies() {
   # Only run if changing branches and not performing the initial `git clone`
   if [ "$CKOUT_TYPE_FLAG" = "1" ] && [ "$IS_CLONING" = "false" ]; then
@@ -64,6 +118,7 @@ update_npm_dependencies() {
 }
 
 config_git_commit_signing
+activate_nvm_env
 update_npm_dependencies
 
 # env cleanup (vars, functions, utils)
