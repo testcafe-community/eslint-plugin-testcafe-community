@@ -22,3 +22,9 @@ explicit_run_cmd() {
   log "$> $cmd"
   eval "$cmd"
 }
+
+# Unset all functions/vars this utils file creates
+cleanup() {
+  unset LOG_PREFIX
+  unset cleanup replay log error explicit_run_cmd 
+}

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
 LOG_PREFIX="[.husky/post-checkout]"
@@ -16,13 +16,13 @@ if [ -z "$HEAD_PREV" ]; then
 fi
 
 config_git_commit_signing() {
-  if [ "$IS_CLONING" == true ]; then
+  if [ "$IS_CLONING" = "true" ]; then
     log "Configuring Git: commit.gpgsign=true"
     if ! git config --local commit.gpgsign true; then
       error "ERROR: Failed to configure GPG signing for commits."
       error "Commits are required to be signed for this repository."
       exit 1
-    elif ! git config --get user.signingkey &>/dev/null; then
+    elif ! git config --get user.signingkey 1>/dev/null 2>&1; then
       log "==============================================================="
       log "                   USER ACTION REQUIRED!"
       log "---------------------------------------------------------------"
@@ -39,8 +39,8 @@ config_git_commit_signing() {
 
 update_npm_dependencies() {
   # Only run if changing branches and not performing the initial `git clone`
-  if [ "$CKOUT_TYPE_FLAG" == 1 ] && [ "$IS_CLONING" == false ]; then
-    local changed_files=""
+  if [ "$CKOUT_TYPE_FLAG" = "1" ] && [ "$IS_CLONING" = "false" ]; then
+    changed_files=""
     # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224
     changed_files="$(git diff-tree -r --name-only --diff-filter=M --no-commit-id "$HEAD_PREV" "$HEAD_NEW")"
 
@@ -48,7 +48,7 @@ update_npm_dependencies() {
       log "CHANGE DETECTED: 'package-lock.json'"
       log "Dependency requirements changed! This will take a few seconds..."
 
-      if ! command -v npm &>/dev/null; then
+      if ! command -v npm 1>/dev/null 2>&1; then
         log "NPM not found on \$PATH, however 'npm install' is desired. Please accomplish manually."
         return 1
       fi
@@ -59,8 +59,14 @@ update_npm_dependencies() {
         return 1
       fi
     fi
+    unset changed_files
   fi
 }
 
 config_git_commit_signing
 update_npm_dependencies
+
+# env cleanup (vars, functions, utils)
+unset HEAD_PREV HEAD_NEW CKOUT_TYPE_FLAG IS_CLONING
+unset config_git_commit_signing activate_nvm_env update_npm_dependencies
+cleanup
