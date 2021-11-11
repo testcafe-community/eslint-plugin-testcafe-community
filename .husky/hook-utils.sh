@@ -78,15 +78,30 @@ activate_nvm_env() {
       if ! nvm install-latest-npm; then
         error "ERROR: failed to update to the latest npm."
         error "You will need to re-run the npm update manually."
-        error "\n  nvm install-latest-npm\n"
+        error ""
+        error "  nvm use"
+        error "  nvm install-latest-npm"
+        error ""
         unset -v output VERSION response confirmed
         return 1
       fi
+      log "Installation successful, however you need to run:"
+      log ""
+      log "  nvm use"
+      log ""
+      log "to activate the expected node version in your shell environment."
     else
       error "NODE VERSION MIXMATCH: Expected dev environment Node.js version is not installed."
-      error "Authors expect to contributors to use the Node.js version defined in .nvmrc for development."
-      error "dev at your own risk!"
+      error "The project author expects contributors to use the Node.js version defined in .nvmrc for development."
+      error "Develop at your own risk!"
     fi
+  else
+    log "NODE VERSION CHANGE DETECTED"
+    log "No installation required but you need to run:"
+    log ""
+    log "  nvm use"
+    log ""
+    log "to activate the expected node version for development."
   fi
   unset -v output VERSION response confirmed
 }
