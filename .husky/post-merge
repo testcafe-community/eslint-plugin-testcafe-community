@@ -5,14 +5,17 @@
 
 . "$(dirname "$0")/hook-utils.sh"
 
+modified_files_in_merge="$(git diff-tree -r --name-only --diff-filter=M --no-commit-id ORIG_HEAD HEAD)"
+readonly modified_files_in_merge
+
+# Function to fix merge of package-lock files & ensure project dependencies are 
+# all installed for the newly merged branch
 update_npm_dependencies() {
   # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224
-  changed_files=""
+  changed_files="$modified_files_in_merge"
   output=""
   lockfiles=""
   NEEDS_INSTALL=true
-
-  changed_files="$(git diff-tree -r --name-only --diff-filter=M --no-commit-id ORIG_HEAD HEAD)"
 
   if output="$(replay "$changed_files" | grep "package-lock.json")"; then
     log "CHANGE DETECTED: 'package-lock.json'"
@@ -89,8 +92,26 @@ update_npm_dependencies() {
   unset -v changed_files output lockfiles NEEDS_INSTALL
 }
 
-update_npm_dependencies
+# --------------------------------------------
+# main
+# --------------------------------------------
+EC=0
 
-# env cleanup (vars, functions, utils)
-unset update_npm_dependencies
+# [1]
+if replay "$modified_files_in_merge" | grep -q ".nvmrc"; then
+  activate_nvm_env || EC=$?
+fi
+
+# [2]
+if ! [ "$EC" -eq 0 ]; then
+  error "due to an error above, your npm dependencies were not updated automatically."
+  error "you will need to run 'npm install' yourself."
+  exit "$EC"
+else
+  update_npm_dependencies
+fi
+
+# [3] env cleanup (vars, functions, utils)
+unset -v modified_files_in_merge
+unset -f update_npm_dependencies
 cleanup
