@@ -12,5 +12,5 @@ if [ "$CALLER_CMD" = "rebase" ]; then
   "$(dirname "$0")"/post-merge
 fi
 
-unset CALLER_CMD
+unset -v CALLER_CMD
 cleanup

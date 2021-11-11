@@ -34,7 +34,12 @@ if command -v npm 1>/dev/null 2>&1; then
     exit 1
   fi
 
+  unset -v output staged_files
 else
   error "NPM not found on \$PATH, unable to run pre-commit lint hook."
   exit 1
 fi
+
+# env cleanup
+unset -v NODE_ENV npm_config_loglevel
+cleanup

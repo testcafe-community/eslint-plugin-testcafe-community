@@ -25,6 +25,6 @@ explicit_run_cmd() {
 
 # Unset all functions/vars this utils file creates
 cleanup() {
-  unset LOG_PREFIX
-  unset cleanup replay log error explicit_run_cmd 
+  unset -v LOG_PREFIX
+  unset -f cleanup replay log error explicit_run_cmd
 }

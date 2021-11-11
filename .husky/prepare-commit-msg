@@ -31,5 +31,5 @@ log "$> npx cz ${CZ_OPTIONS}"
 eval "$cmd"
 
 # env cleanup (vars, functions, utils)
-unset COMMIT_MSG_SOURCE CZ_OPTIONS cmd
+unset -v COMMIT_MSG_SOURCE CZ_OPTIONS cmd
 cleanup

@@ -20,3 +20,8 @@ if ! npx --no-install commitlint --edit "$COMMIT_MSG_FILE"; then
   printRetryMsg
   exit 1
 fi
+
+# env cleanup
+unset -v COMMIT_MSG_FILE
+unset -f printRetryMsg
+cleanup

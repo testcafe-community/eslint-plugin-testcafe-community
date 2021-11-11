@@ -21,7 +21,7 @@ update_npm_dependencies() {
     # concatenate filenames with space (collapse newlines)
     if ! lockfiles="$(printf '%s' "$output" | tr '\n' ' ')"; then
       error "ERROR: something bad happened. Exiting..."
-      unset changed_files output lockfiles NEEDS_INSTALL
+      unset -v changed_files output lockfiles NEEDS_INSTALL
       return 1
     fi
 
@@ -35,18 +35,18 @@ update_npm_dependencies() {
   fi
 
   if [ "$NEEDS_INSTALL" = "true" ]; then
-    unset NEEDS_INSTALL
+    unset -v NEEDS_INSTALL
 
     if ! command -v npm 1>/dev/null 2>&1; then
       error "ERROR: NPM not found on \$PATH, however 'npm install' is desired. Please accomplish manually."
-      unset changed_files output lockfiles
+      unset -v changed_files output lockfiles
       return 1
     fi
 
     if ! explicit_run_cmd "npm install --prefer-offline --no-fund --no-audit"; then
       error "ERROR: Dependency installation failed."
       error "You will need to perform an install manually to continue."
-      unset changed_files output lockfiles
+      unset -v changed_files output lockfiles
       return 1
     fi
 
@@ -57,13 +57,13 @@ update_npm_dependencies() {
       # concatenate filenames with space (collapse newlines)
       if ! lockfiles="$(printf '%s' "$output" | tr '\n' ' ')"; then
         error "ERROR: something bad happened. Exiting..."
-        unset changed_files output lockfiles
+        unset -v changed_files output lockfiles
         return 1
       fi
 
       if ! eval "git add -- $lockfiles"; then
         error "ERROR: some reason git failed.  Exiting..."
-        unset changed_files output lockfiles
+        unset -v changed_files output lockfiles
         return 1
       fi
 
@@ -83,10 +83,10 @@ update_npm_dependencies() {
         filenoun="${filenoun}s"
       fi
       log "Please commit the newly generated $filenoun for the team!"
-      unset count filenoun
+      unset -v count filenoun
     fi
   fi
-  unset changed_files output lockfiles NEEDS_INSTALL
+  unset -v changed_files output lockfiles NEEDS_INSTALL
 }
 
 update_npm_dependencies

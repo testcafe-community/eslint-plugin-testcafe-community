@@ -15,6 +15,7 @@ if [ -z "$HEAD_PREV" ]; then
   IS_CLONING=true
 fi
 
+# Function to configure git repository to enforce GPG signed commits
 config_git_commit_signing() {
   if [ "$IS_CLONING" = "true" ]; then
     log "Configuring Git: commit.gpgsign=true"
@@ -104,16 +105,18 @@ update_npm_dependencies() {
 
       if ! command -v npm 1>/dev/null 2>&1; then
         log "NPM not found on \$PATH, however 'npm install' is desired. Please accomplish manually."
+        unset -v changed_files
         return 1
       fi
 
       if ! explicit_run_cmd "npm install --prefer-offline --no-fund --no-audit"; then
         error "ERROR: Dependency installation failed."
         error "You will need to perform an install manually to continue."
+        unset -v changed_files
         return 1
       fi
     fi
-    unset changed_files
+    unset -v changed_files
   fi
 }
 
@@ -121,7 +124,7 @@ config_git_commit_signing
 activate_nvm_env
 update_npm_dependencies
 
-# env cleanup (vars, functions, utils)
-unset HEAD_PREV HEAD_NEW CKOUT_TYPE_FLAG IS_CLONING
-unset config_git_commit_signing activate_nvm_env update_npm_dependencies
+# [4] env cleanup (vars, functions, utils)
+unset -v HEAD_PREV HEAD_NEW CKOUT_TYPE_FLAG IS_CLONING
+unset -f config_git_commit_signing activate_nvm_env update_npm_dependencies
 cleanup
