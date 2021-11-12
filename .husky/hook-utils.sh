@@ -23,6 +23,38 @@ explicit_run_cmd() {
   eval "$cmd"
 }
 
+# POSIX Compliant & portable (X-OS) realpath implementation
+realpath() {
+  OURPWD="$PWD"
+  cd "$(dirname "$1")" || return 1
+  LINK=$(readlink "$(basename "$1")") || true
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")" || return 1
+    LINK=$(readlink "$(basename "$1")") || true
+  done
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD" || return 1
+  echo "$REALPATH"
+  unset -v OURPWD LINK REALPATH
+  return 0
+}
+
+# Resolves project directory
+get_project_dir() {
+  directory=""
+  if ! directory="$(git rev-parse --show-toplevel)"; then
+    error "ERROR: Unable to determine project directory."
+    exit 1
+  fi
+  if ! directory="$(realpath "$directory")"; then
+    error "ERROR: Unable to determine absolute path of project directory."
+    exit 1
+  fi
+  replay "$directory"
+  unset -v directory
+  return 0
+}
+
 # Function to activate designated node environment based on .nvmrc value
 # facilitates installation if not existant
 activate_nvm_env() {
@@ -39,10 +71,21 @@ activate_nvm_env() {
     # shellcheck disable=SC1090,SC2240
     . "$NVM_DEFAULT_PATH" --no-use # Load nvm into git hook's shell
   fi
+
+  currentNodeVer="$(nvm current)"
+  projDir="$(get_project_dir)"
+  if ! [ -f "$projDir/.nvmrc" ] || grep -q "$currentNodeVer" "$projDir/.nvmrc"; then
+    unset -v projDir currentNodeVer
+    nvm unload
+    return 0 # Matches current version, stop processing
+  fi
+  unset -v projDir currentNodeVer
+
   output=""
   if ! output="$(nvm use 2>&1 1>/dev/null)"; then
     if ! replay "$output" | grep --quiet "not yet installed"; then
       unset -v output
+      nvm unload
       return 0 # Abort action
     fi
     VERSION=""
@@ -50,6 +93,7 @@ activate_nvm_env() {
     # enable user input, git by default runs in non-interactive mode
     if ! exec </dev/tty; then
       unset -v output VERSION
+      nvm unload
       return 0 # Abort
     fi
     response=""
@@ -72,6 +116,7 @@ activate_nvm_env() {
       if ! nvm install "$VERSION"; then
         error "ERROR: nvm's installer failed, see error above."
         error "Your node version does not match with the expected dev environment version."
+        nvm unload
         unset -v output VERSION response confirmed
         return 1
       fi
@@ -82,6 +127,7 @@ activate_nvm_env() {
         error "  nvm use"
         error "  nvm install-latest-npm"
         error ""
+        nvm unload
         unset -v output VERSION response confirmed
         return 1
       fi
@@ -103,11 +149,13 @@ activate_nvm_env() {
     log ""
     log "to activate the expected node version for development."
   fi
+  nvm unload
   unset -v output VERSION response confirmed
 }
 
 # Unset all functions/vars this utils file creates
 cleanup() {
   unset -v LOG_PREFIX
-  unset -f cleanup replay log error explicit_run_cmd activate_nvm_env
+  unset -f cleanup replay log error explicit_run_cmd \
+           realpath get_project_dir activate_nvm_env
 }
