@@ -112,6 +112,5 @@ else
 fi
 
 # [3] env cleanup (vars, functions, utils)
-unset -v modified_files_in_merge
 unset -f update_npm_dependencies
 cleanup
