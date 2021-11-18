@@ -1,0 +1,27 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+[ -z "$LOG_PREFIX" ] && LOG_PREFIX="[.husky/pre-push]"
+
+. "$(dirname "$0")/hook-utils.sh"
+
+remote_origin_name="$1"
+# remote_origin_location="$2"
+# current_branch="$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')"
+tracked_branch="$(git rev-parse --abbrev-ref '@{upstream}')"
+
+if [ "$tracked_branch" = "${remote_origin_name}/master" ]; then
+  log "EVENT: Detected a push to remote:master"
+  log "Running test suite just-in-case, we don't want to break anything!"
+  log "This will only take a minute..."
+  export npm_config_loglevel=silent
+  if ! npm test; then
+    error "Test suite failed! It's a good thing, we checked!"
+    error "Good Luck!"
+    exit 1
+  fi
+fi 
+
+# env cleanup
+unset -v tracked_branch npm_config_loglevel
+cleanup
