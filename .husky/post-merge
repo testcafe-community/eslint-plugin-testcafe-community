@@ -1,25 +1,34 @@
-#!/bin/bash
+#!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
 [ -z "$LOG_PREFIX" ] && LOG_PREFIX="[.husky/post-merge]"
 
 . "$(dirname "$0")/hook-utils.sh"
 
+modified_files_in_merge="$(git diff-tree -r --name-only --diff-filter=M --no-commit-id ORIG_HEAD HEAD)"
+readonly modified_files_in_merge
+
+# Function to fix merge of package-lock files & ensure project dependencies are 
+# all installed for the newly merged branch
 update_npm_dependencies() {
   # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224
-  local changed_files=""
-  local output=""
-  local lockfiles=()
-  local NEEDS_INSTALL=true
-
-  changed_files="$(git diff-tree -r --name-only --diff-filter=M --no-commit-id ORIG_HEAD HEAD)"
+  changed_files="$modified_files_in_merge"
+  output=""
+  lockfiles=""
+  NEEDS_INSTALL=true
 
   if output="$(replay "$changed_files" | grep "package-lock.json")"; then
     log "CHANGE DETECTED: 'package-lock.json'"
     log "Lock files rarely merge properly. Deleting and re-generating it..."
 
-    lockfiles=("$output")            # make array of filepaths
-    rm "${lockfiles[@]}"
+    # concatenate filenames with space (collapse newlines)
+    if ! lockfiles="$(printf '%s' "$output" | tr '\n' ' ')"; then
+      error "ERROR: something bad happened. Exiting..."
+      unset -v changed_files output lockfiles NEEDS_INSTALL
+      return 1
+    fi
+
+    rm "$lockfiles"
 
   elif replay "$changed_files" | grep --quiet "package.json"; then
     log "CHANGE DETECTED: 'package.json'"
@@ -28,33 +37,80 @@ update_npm_dependencies() {
     NEEDS_INSTALL=false
   fi
 
-  if [ "$NEEDS_INSTALL" == true ]; then
-    cmd="npm install --prefer-offline --no-fund --no-audit"
-    if ! command -v npm &>/dev/null; then
-      log "NPM not found on \$PATH, however '$cmd' is desired. Please accomplish manually."
-      return
+  if [ "$NEEDS_INSTALL" = "true" ]; then
+    unset -v NEEDS_INSTALL
+
+    if ! command -v npm 1>/dev/null 2>&1; then
+      error "ERROR: NPM not found on \$PATH, however 'npm install' is desired. Please accomplish manually."
+      unset -v changed_files output lockfiles
+      return 1
     fi
-    log "$> $cmd"
-    eval "$cmd"
+
+    if ! explicit_run_cmd "npm install --prefer-offline --no-fund --no-audit"; then
+      error "ERROR: Dependency installation failed."
+      error "You will need to perform an install manually to continue."
+      unset -v changed_files output lockfiles
+      return 1
+    fi
 
     changed_files="$(git diff --name-only --diff-filter=d)"
     if output="$(replay "$changed_files" | grep "package-lock.json")"; then
       log "ALL FIXED! package-lock.json needed a refresh."
 
-      lockfiles=("$output")            # make array of filepaths
-      git add -- "${lockfiles[@]}"
-      
-      for lockfile in "${lockfiles[@]}"; do
-        log "STAGED: $lockfile"
-      done
-      
-      local filenoun="file"
-      if [ "${#lockfiles[@]}" -gt 1 ]; then
+      # concatenate filenames with space (collapse newlines)
+      if ! lockfiles="$(printf '%s' "$output" | tr '\n' ' ')"; then
+        error "ERROR: something bad happened. Exiting..."
+        unset -v changed_files output lockfiles
+        return 1
+      fi
+
+      if ! eval "git add -- $lockfiles"; then
+        error "ERROR: some reason git failed.  Exiting..."
+        unset -v changed_files output lockfiles
+        return 1
+      fi
+
+      count=0
+      tmp="$(mktmp)"
+      replay "$output" > "$tmp"
+      while IFS= read -r line <&3 || [ -n "$line" ]; do
+        {
+          log "STAGED: $line" || break # abort upon failure if relevant
+          count=$((count+1))
+        } 3<&-
+      done 3< "$tmp"
+      rm "$tmp"
+
+      filenoun="file"
+      if [ $count -gt 1 ]; then
         filenoun="${filenoun}s"
       fi
       log "Please commit the newly generated $filenoun for the team!"
+      unset -v count filenoun
     fi
   fi
+  unset -v changed_files output lockfiles NEEDS_INSTALL
 }
 
-update_npm_dependencies
+# --------------------------------------------
+# main
+# --------------------------------------------
+EC=0
+
+# [1]
+if replay "$modified_files_in_merge" | grep -q ".nvmrc"; then
+  activate_nvm_env || EC=$?
+fi
+
+# [2]
+if ! [ "$EC" -eq 0 ]; then
+  error "due to an error above, your npm dependencies were not updated automatically."
+  error "you will need to run 'npm install' yourself."
+  exit "$EC"
+else
+  update_npm_dependencies
+fi
+
+# [3] env cleanup (vars, functions, utils)
+unset -f update_npm_dependencies
+cleanup

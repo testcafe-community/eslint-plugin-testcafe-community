@@ -8,53 +8,82 @@ LOG_PREFIX="[.husky/post-checkout]"
 HEAD_PREV="$1"
 HEAD_NEW="$2"
 CKOUT_TYPE_FLAG="$3"      # 0 = retrieve file from index, 1 = changing branches
+IS_CLONING=false
 
 # check if this is a post-checkout after a `git clone`
-IS_CLONING=$( [ -z "$HEAD_PREV" ] && echo true || echo false )
+if [ -z "$HEAD_PREV" ]; then
+  IS_CLONING=true
+fi
 
+# Function to configure git repository to enforce GPG signed commits
 config_git_commit_signing() {
-  if [ $IS_CLONING == true ]; then
-    log "Configuring Git: commit.gpgsign=true"
-    if ! git config --local commit.gpgsign true; then
-      error "ERROR: Failed to configure GPG signing for commits."
-      error "Commits are required to be signed for this repository."
-      exit 1
-    elif ! git config --get user.signingkey &>/dev/null; then
-      log "==============================================================="
-      log "                   USER ACTION REQUIRED!"
-      log "---------------------------------------------------------------"
-      log "GPG commit signing is required for this repository! Please"
-      log "configure your repository with the following command:"
-      log "" # prefixed-newline
-      log "    git config --local user.signingkey <GPG_KEY_ID>"
-      log "" # prefixed-newline
-      log "==============================================================="
-    fi
-    log "Signature exists: user.signingkey=$(git config --get user.signingkey)"
+  log "Configuring Git: commit.gpgsign=true"
+  if ! git config --local commit.gpgsign true; then
+    error "ERROR: Failed to configure GPG signing for commits."
+    error "Commits are required to be signed for this repository."
+    exit 1
+  elif ! git config --get user.signingkey 1>/dev/null 2>&1; then
+    log "==============================================================="
+    log "                   USER ACTION REQUIRED!"
+    log "---------------------------------------------------------------"
+    log "GPG commit signing is required for this repository! Please"
+    log "configure your repository with the following command:"
+    log "" # prefixed-newline
+    log "    git config --local user.signingkey <GPG_KEY_ID>"
+    log "" # prefixed-newline
+    log "==============================================================="
   fi
+  log "Signature exists: user.signingkey=$(git config --get user.signingkey)"
 }
 
+# Function to update installed project dependencies based on changed package-lock.json
 update_npm_dependencies() {
   # Only run if changing branches and not performing the initial `git clone`
-  if [ $CKOUT_TYPE_FLAG == 1 ] && [ $IS_CLONING == false ]; then
-    local changed_files=""
+  if [ "$CKOUT_TYPE_FLAG" = "1" ] && [ "$IS_CLONING" = "false" ]; then
+    changed_files=""
     # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224
-    changed_files="$(git diff-tree -r --name-only --diff-filter=M --no-commit-id $HEAD_PREV $HEAD_NEW)"
+    changed_files="$(git diff-tree -r --name-only --diff-filter=M --no-commit-id "$HEAD_PREV" "$HEAD_NEW")"
 
     if echo "$changed_files" | grep --quiet "package-lock.json"; then
       log "CHANGE DETECTED: 'package-lock.json'"
       log "Dependency requirements changed! This will take a few seconds..."
 
-      local cmd="npm install --prefer-offline --no-fund --no-audit"
-      if ! command -v npm &>/dev/null; then
-        log "NPM not found on \$PATH, however '$cmd' is desired. Please accomplish manually."
-        return
+      if ! command -v npm 1>/dev/null 2>&1; then
+        log "NPM not found on \$PATH, however 'npm install' is desired. Please accomplish manually."
+        unset -v changed_files
+        return 1
       fi
-      log "$> $cmd"
-      eval "$cmd"
+
+      if ! explicit_run_cmd "npm install --prefer-offline --no-fund --no-audit"; then
+        error "ERROR: Dependency installation failed."
+        error "You will need to perform an install manually to continue."
+        unset -v changed_files
+        return 1
+      fi
     fi
+    unset -v changed_files
   fi
 }
 
-config_git_commit_signing
+# -----------------------------------------
+# main
+# -----------------------------------------
+# [1] 
+if [ "$IS_CLONING" = "true" ]; then
+  config_git_commit_signing
+fi
+
+# [2] Only run if changing branches
+if [ "$CKOUT_TYPE_FLAG" -eq 1 ] && ! activate_nvm_env; then
+  error "due to an error above, your npm dependencies were not updated automatically."
+  error "you will need to run 'npm install' yourself."
+  exit 1
+fi
+
+# [3]
 update_npm_dependencies
+
+# [4] env cleanup (vars, functions, utils)
+unset -v HEAD_PREV HEAD_NEW CKOUT_TYPE_FLAG IS_CLONING
+unset -f config_git_commit_signing update_npm_dependencies
+cleanup

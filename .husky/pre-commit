@@ -2,21 +2,44 @@
 . "$(dirname "$0")/_/husky.sh"
 
 export NODE_ENV=production
+export npm_config_loglevel=silent
 
 LOG_PREFIX="[.husky/pre-commit]"
 
 . "$(dirname "$0")/hook-utils.sh"
 
-if command -v npm &>/dev/null; then
-  staged_files=("$(git diff --staged --name-only --diff-filter=d)")
-  export npm_config_loglevel=silent
-  log "$> npm run lint:file -- --quiet "${staged_files[@]}""
-  if ! npm run lint:file -- --quiet ${staged_files[@]}; then
+if command -v npm 1>/dev/null 2>&1; then
+  output=""
+  staged_files=""
+
+  if ! output="$(git diff --staged --name-only --diff-filter=d)"; then
+    error "ERROR: unable to retrieved staged files from git"
+    error "ERROR: something bad happened. Exiting..."
+    exit 1 
+  fi
+
+  if [ ${#output} -eq 0 ]; then
+    exit 0 # abort, no files, let git handle no staged files.
+  fi
+
+  # concatenate filenames with space (collapse newlines)
+  if ! staged_files="$(printf '%s' "$output" | tr '\n' ' ')"; then
+    error "ERROR: something bad happened. Exiting..."
+    exit 1
+  fi
+
+  if ! explicit_run_cmd "npm run lint:file -- --quiet $staged_files"; then
     error "ERROR: Dirty code detected!"
     error "Fix the lint errors before committing to the repository."
     exit 1
   fi
+
+  unset -v output staged_files
 else
   error "NPM not found on \$PATH, unable to run pre-commit lint hook."
   exit 1
 fi
+
+# env cleanup
+unset -v NODE_ENV npm_config_loglevel
+cleanup
