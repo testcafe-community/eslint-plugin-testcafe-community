@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: "FEAT: (short-title)"
+title: "feat: (short-title)"
 labels: enhancement
 assignees: "codejedi365"
 ---
@@ -12,8 +12,6 @@ Please fill in as much of the template below as you’re able.
 -->
 
 # Feature Request
-
-## Subject of the feature
 
 <!-- Briefly describe your idea for a feature here. -->
 

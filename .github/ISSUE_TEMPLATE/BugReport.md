@@ -14,8 +14,6 @@ information the harder it is for us to resolve your problem.
 
 # Bug Report
 
-## Describe the bug/issue
-
 <!--A clear and concise description of what the bug is. -->
 
 ## Bug Reproduction
