@@ -4,6 +4,7 @@
 export NODE_ENV=production
 export npm_config_loglevel=silent
 
+# shellcheck disable=SC2034
 LOG_PREFIX="[.husky/pre-commit]"
 
 . "$(dirname "$0")/hook-utils.sh"

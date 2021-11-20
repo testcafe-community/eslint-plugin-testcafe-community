@@ -29,6 +29,31 @@ jobs:
         run: npm run lint
 
 
+  lint-scripts:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: git checkout HEAD
+        uses: actions/checkout@v2
+
+      - name: Install ShellCheck
+        run: apt update && apt install shellcheck
+
+      - name: Shellcheck
+        run: shellcheck -S warning 
+              .husky/commit-msg
+              .husky/hook-utils.sh
+              .husky/post-checkout
+              .husky/post-merge
+              .husky/post-rewrite
+              .husky/pre-commit
+              .husky/pre-push
+              .husky/prepare-commit-msg
+
+      # - name: shell format
+      #   run: shfmt
+
+
   lint-commits:
     name: Semantic commits
     runs-on: ubuntu-latest
