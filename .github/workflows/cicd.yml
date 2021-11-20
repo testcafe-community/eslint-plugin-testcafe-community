@@ -39,6 +39,11 @@ jobs:
       - name: Install ShellCheck
         run: sudo apt update && sudo apt install shellcheck
 
+      - name: simulate husky install
+        # husky does not install when in CI env
+        # but file is needed so shellcheck does not throw errors for missing file
+        run: mkdir -p .husky/_ && touch .husky/_/husky.sh
+
       - name: Shellcheck
         run: shellcheck -x
               .husky/commit-msg
