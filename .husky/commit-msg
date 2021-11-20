@@ -1,8 +1,13 @@
 #!/bin/sh
+# git hook commit-msg
+# --------------------------------------
+
+# shellcheck source=.husky/_/husky.sh
 . "$(dirname "$0")/_/husky.sh"
 
 [ -z "$LOG_PREFIX" ] && LOG_PREFIX="[.husky/commit-msg]"
 
+# shellcheck source=.husky/hook-utils.sh
 . "$(dirname "$0")/hook-utils.sh"
 
 COMMIT_MSG_FILE="$1"

@@ -40,7 +40,7 @@ jobs:
         run: sudo apt update && sudo apt install shellcheck
 
       - name: Shellcheck
-        run: shellcheck -S warning 
+        run: shellcheck -x
               .husky/commit-msg
               .husky/hook-utils.sh
               .husky/post-checkout

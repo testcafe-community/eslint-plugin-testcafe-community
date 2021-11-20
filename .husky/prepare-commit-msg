@@ -1,9 +1,14 @@
 #!/bin/sh
+# git hook prepare-commit-msg
+# --------------------------------------
+
+# shellcheck source=.husky/_/husky.sh
 . "$(dirname "$0")/_/husky.sh"
 
 [ -z "$LOG_PREFIX" ] && LOG_PREFIX="[.husky/prepare-commit-msg]"
 [ -z "$CZ_RETRY" ] && CZ_RETRY=false
 
+# shellcheck source=.husky/hook-utils.sh
 . "$(dirname "$0")/hook-utils.sh"
 
 # GIT HOOK ARGV

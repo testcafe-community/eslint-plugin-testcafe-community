@@ -1,9 +1,14 @@
 #!/bin/sh
+# git hook post-checkout
+# --------------------------------------
+
+# shellcheck source=.husky/_/husky.sh
 . "$(dirname "$0")/_/husky.sh"
 
 # shellcheck disable=SC2034
 LOG_PREFIX="[.husky/post-checkout]"
 
+# shellcheck source=.husky/hook-utils.sh
 . "$(dirname "$0")/hook-utils.sh"
 
 HEAD_PREV="$1"
