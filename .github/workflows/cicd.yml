@@ -79,11 +79,14 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-fund --no-audit
 
-      - name: PR commits check
-        if: ${{ github.event_name == 'pull_request' }}
+      - name: Commits lint check
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+        env:
+          BASE_COMMIT_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          NEWEST_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.event.after }}
         run: npx commitlint --verbose
-             --from ${{ github.event.pull_request.base.sha }}
-             --to ${{ github.event.pull_request.head.sha }}
+             --from "$BASE_COMMIT_SHA"
+             --to "$NEWEST_COMMIT_SHA"
 
 
   build:
