@@ -1,9 +1,14 @@
 #!/bin/sh
+# git hook post-rewrite
+# --------------------------------------
+
+# shellcheck source=.husky/_/husky.sh
 . "$(dirname "$0")/_/husky.sh"
 
 CALLER_CMD="$1"                            # rebase || amend
 export LOG_PREFIX="[.husky/post-rewrite]"
 
+# shellcheck source=.husky/hook-utils.sh
 . "$(dirname "$0")/hook-utils.sh"
 
 # derived from https://gist.github.com/taurus227/28960de89e6c43bb3d492125368f1224

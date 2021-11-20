@@ -1,11 +1,17 @@
 #!/bin/sh
+# git hook pre-commit
+# --------------------------------------
+
+# shellcheck source=.husky/_/husky.sh
 . "$(dirname "$0")/_/husky.sh"
 
 export NODE_ENV=production
 export npm_config_loglevel=silent
 
+# shellcheck disable=SC2034
 LOG_PREFIX="[.husky/pre-commit]"
 
+# shellcheck source=.husky/hook-utils.sh
 . "$(dirname "$0")/hook-utils.sh"
 
 if command -v npm 1>/dev/null 2>&1; then
