@@ -12,7 +12,8 @@
 COMMIT_MSG_SOURCE="$2" # message | template | merge | squash | commit
 # COMMIT_OBJ_NAME="$3"   # commit object name
 
-if [ "$COMMIT_MSG_SOURCE" = "merge" ]; then
+if [ "$COMMIT_MSG_SOURCE" = "merge" ] || [ "$COMMIT_MSG_SOURCE" = "message" ]; then
+  # on cherry-pick or merge commit, do not enable commitizen
   exit 0 # pass on succesfully
 fi
 
