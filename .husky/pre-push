@@ -1,5 +1,5 @@
 #!/bin/sh
-# git hook pre-push
+# git-hook: pre-push
 # --------------------------------------
 
 # shellcheck source=.husky/_/husky.sh
@@ -10,23 +10,37 @@
 # shellcheck source=.husky/hook-utils.sh
 . "$(dirname "$0")/hook-utils.sh"
 
+env_cleanup() {
+  unset -v remote_origin_name current_branch tracked_branch npm_config_loglevel
+  unset -f env_cleanup
+  cleanup
+}
+
 remote_origin_name="$1"
 # remote_origin_location="$2"
-# current_branch="$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')"
-tracked_branch="$(git rev-parse --abbrev-ref '@{upstream}')"
 
-if [ "$tracked_branch" = "${remote_origin_name}/master" ]; then
-  log "EVENT: Detected a push to remote:master"
-  log "Running test suite just-in-case, we don't want to break anything!"
-  log "This will only take a minute..."
-  export npm_config_loglevel=silent
-  if ! npm test; then
-    error "Test suite failed! It's a good thing, we checked!"
-    error "Good Luck!"
-    exit 1
+if ! current_branch="$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')"; then
+  error "Unable to detect current branch"
+  exit 1
+fi
+
+if ! tracked_branch="$(git rev-parse --abbrev-ref '@{upstream}')"; then
+  # branch is not currently tracking an upstream branch ref
+  if ! [ "$current_branch" = "main" ] && ! [ "$current_branch" = "master" ]; then
+    env_cleanup && exit 0
   fi
-fi 
+elif ! [ "$tracked_branch" = "${remote_origin_name}/master" ]; then
+  env_cleanup && exit 0
+fi
 
-# env cleanup
-unset -v tracked_branch npm_config_loglevel
-cleanup
+log "EVENT: Detected a push to remote:master"
+log "Running test suite just-in-case, we don't want to break anything!"
+log "This will only take a minute..."
+export npm_config_loglevel=silent
+if ! npm test; then
+  error "Test suite failed! It's a good thing, we checked!"
+  error "Good Luck!"
+  exit 1
+fi
+
+env_cleanup

@@ -19,6 +19,9 @@ COMMIT_MSG_SOURCE="$2" # message | template | merge | squash | commit
 
 if [ "$COMMIT_MSG_SOURCE" = "merge" ] || [ "$COMMIT_MSG_SOURCE" = "message" ]; then
   # on cherry-pick or merge commit, do not enable commitizen
+  # and pass on succesfully
+  unset -v COMMIT_MSG_SOURCE
+  cleanup
   exit 0 # pass on succesfully
 fi
 
@@ -26,16 +29,19 @@ log "Starting commitizen cli for conventional commits..."
 
 # Default
 CZ_OPTIONS="--hook"
-cmd="exec </dev/tty && npx git-cz $CZ_OPTIONS || true"
 
 if [ $CZ_RETRY = "true" ]; then
   CZ_OPTIONS="--retry"
-  cmd="npx git-cz --retry || true"
+elif ! exec </dev/tty; then
+  error "Unable to activate <stdin> for interactive shell for commitizen cli"
+  error "Aborting interactive commit..."
+  unset -v COMMIT_MSG_SOURCE CZ_OPTIONS
+  cleanup
+  exit 0
 fi
 
-log "$> npx cz ${CZ_OPTIONS}"
-eval "$cmd"
+explicit_run_cmd "npx cz ${CZ_OPTIONS} || true"
 
 # env cleanup (vars, functions, utils)
-unset -v COMMIT_MSG_SOURCE CZ_OPTIONS cmd
+unset -v COMMIT_MSG_SOURCE CZ_OPTIONS
 cleanup
