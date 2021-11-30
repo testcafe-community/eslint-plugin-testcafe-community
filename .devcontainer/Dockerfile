@@ -5,5 +5,5 @@ FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:${VARIANT}
 
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt update && export DEBIAN_FRONTEND=noninteractive \
-    && apt uninstall -y yarn
+    && apt remove -y yarn
     # && apt -y install --no-install-recommends <your-package-list-here>

@@ -5,9 +5,7 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": { 
-			"VARIANT": "bullseye",
-			"USERNAME": "vscode"
-			// "INSTALL_ZSH": "false",
+			"VARIANT": "bullseye"
 		}
 	},
 
@@ -24,12 +22,13 @@
 	],
 
 	// Customization & automation
-	"postCreateCommand": "nvm install --latest-npm && npm install --no-audit --no-fund",
+	"postCreateCommand": 
+		". /usr/local/share/nvm/nvm.sh --no-use; nvm install --latest-npm && npm install --no-audit --no-fund",
 	"postStartCommand": "npm install --no-audit --no-fund --prefer-offline",
 	"postAttachCommand": "",
 
 	// Set user to become when attaching to the container
-	"remoteUser": "vscode",
+	"remoteUser": "node",
 	"features": {
 		"git": "latest"
 	}
