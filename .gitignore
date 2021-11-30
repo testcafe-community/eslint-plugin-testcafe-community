@@ -1,8 +1,11 @@
-node_modules
-.ideacoverage
-.idea
-coverage
-dist
+# IDE / devcontainer
+!.vscode/launch.json
+.vscode/settings.json
+
+# node / npm
+node_modules/
+coverage/
+dist/
 yarn.lock
 
-__cache__
+__cache__/
