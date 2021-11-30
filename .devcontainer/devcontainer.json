@@ -21,7 +21,8 @@
 		"dbaeumer.vscode-eslint",
 		"eg2.vscode-npm-script",
 		"sleistner.vscode-fileutils",
-		"mhutchie.git-graph"
+		"mhutchie.git-graph",
+		"visualstudioexptteam.vscodeintellicode"
 	],
 
 	// Customization & automation
