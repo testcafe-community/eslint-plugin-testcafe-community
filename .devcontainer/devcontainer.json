@@ -28,7 +28,7 @@
 	// Customization & automation
 	"postCreateCommand": 
 		". /usr/local/share/nvm/nvm.sh --no-use; nvm install --latest-npm && npm install --no-audit --no-fund",
-	"postStartCommand": "npm install --no-audit --no-fund --prefer-offline",
+	"postStartCommand": "./.devcontainer/onstart.sh",
 	"postAttachCommand": "",
 
 	// Add name for container when built
