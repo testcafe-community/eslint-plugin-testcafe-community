@@ -1,0 +1,7 @@
+[commit]
+    gpgsign = true
+    template = /dev/null # No Template b/c commitizen generates commit
+
+# ======================================= #
+# DO NOT ADD user.signingkey TO THIS FILE #
+# ======================================= #

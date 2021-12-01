@@ -55,6 +55,47 @@ get_project_dir() {
   return 0
 }
 
+# Function to configure git repository to include project `.gitconfig`
+config_git_project_gitconfig() {
+  if ! output="$(git config --local --get include.path)"; then
+    error "ERROR: unable to read local git configuration"
+    unset -v output
+    return 1
+  fi
+  if [ "$output" = "../.gitconfig" ]; then
+    unset -v output
+    return 0 # As desired, return silently
+  fi
+  unset -v output
+  if ! git config --local include.path "../.gitconfig"; then
+    error "ERROR: failed to add project .gitconfig to local git configuration."
+    return 1
+  fi
+}
+
+# Function to configure git repository to enforce GPG signed commits
+config_git_commit_signing() {
+  # check if configured properly
+  if ! git config --get commit.gpgsign 1>/dev/null 2>&1; then
+    error "ERROR: missing commit.gpgsign=true in git config."
+    error "Commits are required to be signed for this repository."
+    return 1
+  fi
+  if ! git config --get user.signingkey 1>/dev/null 2>&1; then
+    log "==============================================================="
+    log "                   USER ACTION REQUIRED!"
+    log "---------------------------------------------------------------"
+    log "GPG commit signing is required for this repository! Please"
+    log "configure your repository with the following command:"
+    log "" # prefixed-newline
+    log "    git config --local user.signingkey <GPG_KEY_ID>"
+    log "" # prefixed-newline
+    log "==============================================================="
+  elif [ "$IS_CLONING" = "true" ]; then
+    log "Signature exists: user.signingkey=$(git config --get user.signingkey)"
+  fi
+}
+
 # Function to activate designated node environment based on .nvmrc value
 # facilitates installation if not existant
 activate_nvm_env() {
@@ -157,5 +198,6 @@ activate_nvm_env() {
 cleanup() {
   unset -v LOG_PREFIX
   unset -f cleanup replay log error explicit_run_cmd \
-           realpath get_project_dir activate_nvm_env
+           realpath get_project_dir activate_nvm_env \
+           config_git_project_gitconfig config_git_commit_signing
 }

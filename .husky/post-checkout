@@ -21,27 +21,6 @@ if [ -z "$HEAD_PREV" ]; then
   IS_CLONING=true
 fi
 
-# Function to configure git repository to enforce GPG signed commits
-config_git_commit_signing() {
-  log "Configuring Git: commit.gpgsign=true"
-  if ! git config --local commit.gpgsign true; then
-    error "ERROR: Failed to configure GPG signing for commits."
-    error "Commits are required to be signed for this repository."
-    exit 1
-  elif ! git config --get user.signingkey 1>/dev/null 2>&1; then
-    log "==============================================================="
-    log "                   USER ACTION REQUIRED!"
-    log "---------------------------------------------------------------"
-    log "GPG commit signing is required for this repository! Please"
-    log "configure your repository with the following command:"
-    log "" # prefixed-newline
-    log "    git config --local user.signingkey <GPG_KEY_ID>"
-    log "" # prefixed-newline
-    log "==============================================================="
-  fi
-  log "Signature exists: user.signingkey=$(git config --get user.signingkey)"
-}
-
 # Function to update installed project dependencies based on changed package-lock.json
 update_npm_dependencies() {
   # Only run if changing branches and not performing the initial `git clone`
@@ -74,10 +53,9 @@ update_npm_dependencies() {
 # -----------------------------------------
 # main
 # -----------------------------------------
-# [1] 
-if [ "$IS_CLONING" = "true" ]; then
-  config_git_commit_signing
-fi
+# [1] Verifying git configuration
+config_git_project_gitconfig
+config_git_commit_signing
 
 # [2] Only run if changing branches
 if [ "$CKOUT_TYPE_FLAG" -eq 1 ] && ! activate_nvm_env; then
@@ -91,5 +69,5 @@ update_npm_dependencies
 
 # [4] env cleanup (vars, functions, utils)
 unset -v HEAD_PREV HEAD_NEW CKOUT_TYPE_FLAG IS_CLONING
-unset -f config_git_commit_signing update_npm_dependencies
+unset -f update_npm_dependencies
 cleanup
