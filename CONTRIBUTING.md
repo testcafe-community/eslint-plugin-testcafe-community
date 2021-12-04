@@ -10,20 +10,32 @@ everyone time!
 
 ## Development Environment
 
+### Option 1 (**RECOMMENDED**)
+
+-   VSCode & associated devcontainer environment (ext:
+    `ms-vscode-remote.remote-containers`) This project will auto-install and
+    configure repository and only requires Docker.
+
+### Option 2
+
 -   Use `nvm` for node version management (see `.nvmrc` for version requirement)
 -   Use latest npm version via `nvm install-latest-npm`
 -   Recommend VSCode & the extensions: ESLint, Git Graph, GitHub Markdown
     Preview.
 -   Upon `clone`, this project will be configured to require GPG signatures for
-    commits. You will need to
-    [create a GPG key](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key)
-    with your validated GitHub email address and configure `git` to use it with
-    the following command:
+    commits.
 
-        ```sh
-        # REF: https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key
-        git config --local user.signingkey <GPG_KEY_ID>
-        ```
+### All Options (**REQUIRED**)
+
+You will need to
+[create a GPG key](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key)
+with your validated GitHub email address and configure `git` to use it with the
+following command:
+
+```sh
+# REF: https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key
+git config --local user.signingkey <GPG_KEY_ID>
+```
 
 ## Guidelines
 

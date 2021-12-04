@@ -46,6 +46,7 @@ jobs:
 
       - name: Shellcheck
         run: shellcheck -x
+              .devcontainer/*.sh
               .husky/commit-msg
               .husky/hook-utils.sh
               .husky/post-checkout

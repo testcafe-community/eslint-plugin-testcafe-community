@@ -1,0 +1,42 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.205.1/containers/typescript-node
+{
+	"name": "Node.js & TypeScript",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": { 
+			"VARIANT": "bullseye"
+		}
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"shellcheck.useWorkspaceRootAsCwd": true,
+		"shellcheck.customArgs": ["-x"]
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"timonwong.shellcheck",
+		"dbaeumer.vscode-eslint",
+		"eg2.vscode-npm-script",
+		"sleistner.vscode-fileutils",
+		"mhutchie.git-graph",
+		"visualstudioexptteam.vscodeintellicode"
+	],
+
+	// Customization & automation
+	"postCreateCommand": 
+		". /usr/local/share/nvm/nvm.sh --no-use; nvm install --latest-npm && npm install --no-audit --no-fund",
+	"postStartCommand": "./.devcontainer/onstart.sh",
+	"postAttachCommand": "",
+
+	// Add name for container when built
+	"runArgs": ["--name=dev-lintplugin-testcafe"],
+
+	// Set user to become when attaching to the container
+	"remoteUser": "node",
+	"features": {
+		"git": "latest"
+	}
+}
