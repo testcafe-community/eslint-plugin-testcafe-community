@@ -76,9 +76,11 @@ config_git_project_gitconfig() {
 # Function to configure git repository to enforce GPG signed commits
 config_git_commit_signing() {
   # check if configured properly
-  if ! git config --get commit.gpgsign 1>/dev/null 2>&1; then
-    error "ERROR: missing commit.gpgsign=true in git config."
-    error "Commits are required to be signed for this repository."
+  if ! output="$(git config --get commit.gpgsign 2>/dev/null)"; then
+    error "ERROR: missing commit.gpgsign setting in git config."
+    return 1
+  elif ! [ "$output" = "true" ]; then
+    error "ERROR: commit.gpgsign must be set to true for project."
     return 1
   fi
   if ! git config --get user.signingkey 1>/dev/null 2>&1; then
