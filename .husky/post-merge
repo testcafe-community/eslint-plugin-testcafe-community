@@ -76,7 +76,15 @@ update_npm_dependencies() {
       fi
 
       count=0
-      tmp="$(mktmp)"
+      make_tmpfile="mktmp"
+      if ! command -v "$make_tmpfile" 1>/dev/null 2>&1; then
+        make_tmpfile="mktemp" # Mac OS
+        if ! command -v "$make_tmpfile" 1>/dev/null 2>&1; then
+          error "ERROR: unable to find command to create temporary file."
+          return 1
+        fi
+      fi
+      tmp="$($make_tmpfile)"
       replay "$output" > "$tmp"
       while IFS= read -r line <&3 || [ -n "$line" ]; do
         {
