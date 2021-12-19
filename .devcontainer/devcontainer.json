@@ -26,6 +26,7 @@
 	],
 
 	// Customization & automation
+	// "initializeCommand": "",
 	"postCreateCommand": 
 		". /usr/local/share/nvm/nvm.sh --no-use; nvm install --latest-npm && npm install --no-audit --no-fund",
 	"postStartCommand": "./.devcontainer/onstart.sh",
