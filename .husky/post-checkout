@@ -1,5 +1,5 @@
 #!/bin/sh
-# git hook post-checkout
+# git-hook: post-checkout
 # --------------------------------------
 
 # shellcheck source=.husky/_/husky.sh

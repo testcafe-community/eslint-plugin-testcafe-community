@@ -1,5 +1,5 @@
 #!/bin/sh
-# git hook pre-commit
+# git-hook: pre-commit
 # --------------------------------------
 
 # shellcheck source=.husky/_/husky.sh

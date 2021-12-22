@@ -1,5 +1,5 @@
 #!/bin/sh
-# git hook commit-msg
+# git-hook: commit-msg
 # --------------------------------------
 
 # shellcheck source=.husky/_/husky.sh

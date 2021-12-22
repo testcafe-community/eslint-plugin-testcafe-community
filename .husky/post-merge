@@ -1,5 +1,5 @@
 #!/bin/sh
-# git hook post-merge
+# git-hook: post-merge
 # --------------------------------------
 
 # shellcheck source=.husky/_/husky.sh

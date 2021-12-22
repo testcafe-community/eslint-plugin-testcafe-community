@@ -1,5 +1,5 @@
 #!/bin/sh
-# git hook prepare-commit-msg
+# git-hook: prepare-commit-msg
 # --------------------------------------
 
 # shellcheck source=.husky/_/husky.sh
@@ -14,15 +14,15 @@
 # GIT HOOK ARGV
 # ------------------------
 # COMMIT_MSG_FILE="$1"   # .git/MERGE_MSG | .git/SQUASH_MSG | .git/COMMIT_EDITMSG
-COMMIT_MSG_SOURCE="$2" # message | template | merge | squash | commit
+COMMIT_MSG_SOURCE="$2"   # message | template | merge | squash | commit
 # COMMIT_OBJ_NAME="$3"   # commit object name
 
-if [ "$COMMIT_MSG_SOURCE" = "merge" ] || [ "$COMMIT_MSG_SOURCE" = "message" ]; then
-  # on cherry-pick or merge commit, do not enable commitizen
+if [ "$COMMIT_MSG_SOURCE" = "merge" ] || [ "$COMMIT_MSG_SOURCE" = "message" ] || [ "$COMMIT_MSG_SOURCE" = "commit" ]; then
+  # on cherry-pick, merge commit, or amend commit, do not enable commitizen
   # and pass on succesfully
   unset -v COMMIT_MSG_SOURCE
   cleanup
-  exit 0 # pass on succesfully
+  exit 0
 fi
 
 log "Starting commitizen cli for conventional commits..."

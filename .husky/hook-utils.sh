@@ -57,11 +57,7 @@ get_project_dir() {
 
 # Function to configure git repository to include project `.gitconfig`
 config_git_project_gitconfig() {
-  if ! output="$(git config --local --get include.path)"; then
-    error "ERROR: unable to read local git configuration"
-    unset -v output
-    return 1
-  fi
+  output="$(git config --local --get include.path || true)"
   if [ "$output" = "../.gitconfig" ]; then
     unset -v output
     return 0 # As desired, return silently

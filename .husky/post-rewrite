@@ -1,5 +1,5 @@
 #!/bin/sh
-# git hook post-rewrite
+# git-hook: post-rewrite
 # --------------------------------------
 
 # shellcheck source=.husky/_/husky.sh
