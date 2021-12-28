@@ -43,6 +43,7 @@
         "test": "run-s --silent test:*",
         "test:unit": "jest --selectProjects UNIT",
         "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
+        "test:docs": "jest --selectProjects DOCUMENTATION --coverage=false",
         "prepare": "is-ci || husky install",
         "prepublishOnly": "is-ci && run-s build",
         "watch": "npm run test:unit -- --watch --"

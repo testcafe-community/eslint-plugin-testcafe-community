@@ -28,7 +28,8 @@ module.exports = {
             ...tsJestPresets,
             runner: "@codejedi365/jest-serial-runner",
             setupFilesAfterEnv: ["jest-extended/all"],
-            testMatch: ["<rootDir>/tests/**/*.spec.ts"]
+            testPathIgnorePatterns: ["/node_modules/", "<rootDir>/tests/docs/"],
+            testMatch: ["**/tests/**/*.spec.ts"]
         },
         {
             displayName: "INTEGRATION",
@@ -36,6 +37,13 @@ module.exports = {
             runner: "@codejedi365/jest-serial-runner",
             setupFilesAfterEnv: ["jest-extended/all"],
             testMatch: ["<rootDir>/tests/**/*.integration-test.ts"]
+        },
+        {
+            displayName: "DOCUMENTATION",
+            ...tsJestPresets,
+            runner: "@codejedi365/jest-serial-runner",
+            setupFilesAfterEnv: ["jest-extended/all"],
+            testMatch: ["<rootDir>/tests/docs/**/*.spec.ts"]
         }
     ],
     testPathIgnorePatterns: ["<rootDir>/tests/fixtures/", "<rootDir>/example/"]

@@ -1,4 +1,4 @@
-import { access, readdir } from "fs-extra";
+import { readdir } from "fs-extra";
 import { resolve } from "path";
 import rulebook from "../../lib/rules";
 import { configs } from "../../lib";
@@ -37,19 +37,6 @@ describe("Rule Definitions", () => {
         expect(rule.meta.docs?.url).not.toBeEmpty();
         expect(rule.meta.docs?.description).not.toBeEmpty();
     });
-
-    it.each(ruleNames)(
-        "%s should have a documentation file (docs/rules/ruleName.md)",
-        async (ruleName) => {
-            const ruleDocFile = resolve(
-                process.cwd(),
-                "docs",
-                "rules",
-                `${ruleName}.md`
-            );
-            await expect(access(ruleDocFile)).toResolve();
-        }
-    );
 });
 
 describe("recommended config", () => {

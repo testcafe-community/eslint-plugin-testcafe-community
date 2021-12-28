@@ -6,7 +6,7 @@ import { promisify } from "util";
 
 const SECONDS = 1000;
 const exec = promisify(execCallback);
-const README_LOCATION = resolve(__dirname, "..", "README.md");
+const README_LOCATION = resolve(__dirname, "..", "..", "README.md");
 
 describe("README.md", () => {
     describe("check", () => {
@@ -39,7 +39,7 @@ describe("README.md", () => {
                     .digest("hex");
                 expect(actualHash).toEqual(expectedHash);
             },
-            15 * SECONDS
+            30 * SECONDS
         );
     });
 
@@ -50,6 +50,6 @@ describe("README.md", () => {
                 exec(`npx eslint --ext md "${README_LOCATION}"`)
             ).resolves.toBeTruthy();
         },
-        10 * SECONDS
+        30 * SECONDS
     );
 });
