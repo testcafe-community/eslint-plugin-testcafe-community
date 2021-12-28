@@ -32,7 +32,7 @@ describe("README.md", () => {
                 const expectedHash = createHash("sha1")
                     .update(originalReadmeContents)
                     .digest("hex");
-                await exec("npm run generate-readme-table");
+                await exec("npm run build:readme");
                 const newReadmeContents = await fs.readFile(README_LOCATION);
                 const actualHash = createHash("sha1")
                     .update(newReadmeContents)
