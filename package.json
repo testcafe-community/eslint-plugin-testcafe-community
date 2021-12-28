@@ -42,6 +42,8 @@
         "test:unit": "jest --selectProjects UNIT",
         "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
         "generate-readme-table": "ts-node -O '{\"module\":\"commonjs\"}' scripts/generate-readme-table.ts",
+        "setup": "run-s --silent setup:*",
+        "setup:expkg": "ts-node -O '{\"module\":\"commonjs\"}' scripts/setup-example-pkg.ts",
         "prepare": "is-ci || husky install",
         "prepublishOnly": "is-ci && run-s build",
         "watch": "npm run test:unit -- --watch --"

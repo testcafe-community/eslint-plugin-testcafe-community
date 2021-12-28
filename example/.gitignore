@@ -1,2 +1,5 @@
 # generated file of packed plugin
 eslint-plugin-testcafe-community*.tgz
+
+# generated file by setup-example.ts
+.eslintrc.*
