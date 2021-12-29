@@ -31,7 +31,9 @@
         "testcafe"
     ],
     "scripts": {
-        "build": "webpack --mode=production --node-env=production",
+        "build": "run-s --silent build:*",
+        "build:prod": "webpack --mode=production --node-env=production",
+        "build:readme": "ts-node -O '{\"module\":\"commonjs\"}' scripts/generate-readme-table.ts",
         "commit": "git commit",
         "commit-retry": "CZ_RETRY=true git commit",
         "format": "npm run lint -- --fix",
@@ -41,7 +43,7 @@
         "test": "run-s --silent test:*",
         "test:unit": "jest --selectProjects UNIT",
         "test:plugin": "jest --selectProjects INTEGRATION --coverage=false",
-        "generate-readme-table": "ts-node -O '{\"module\":\"commonjs\"}' scripts/generate-readme-table.ts",
+        "test:docs": "jest --selectProjects DOCUMENTATION --coverage=false",
         "setup": "run-s --silent setup:*",
         "setup:expkg": "ts-node -O '{\"module\":\"commonjs\"}' scripts/setup-example-pkg.ts",
         "prepare": "is-ci || husky install",
