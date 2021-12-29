@@ -7,20 +7,23 @@
 /* eslint no-console: "off" */
 import { promisify } from "util";
 import { exec } from "child_process";
-import { relative, resolve } from "path";
-import { writeJSON, pathExists } from "fs-extra";
+import { dirname, relative, resolve as joinpath } from "path";
+import { writeJSON, readdir } from "fs-extra";
 import { createInterface, Interface } from "readline";
 import type { Linter } from "eslint";
 
 const execProcess = promisify(exec);
-const examplePkgDir = resolve(__dirname, "..", "example");
-const exPkgLintConfigFile = resolve(examplePkgDir, ".eslintrc.json");
+const examplePkgDir = joinpath(__dirname, "..", "example");
+const exPkgLintConfigFile = joinpath(examplePkgDir, ".eslintrc.json");
 const cli: Interface = createInterface({
     input: process.stdin,
     output: process.stdout
 });
-// eslint-disable-next-line @typescript-eslint/unbound-method
-const askQuestion = promisify(cli.question).bind(cli) as (query: string) => Promise<string>;
+const askQuestion = (query: string): Promise<string> => {
+    return new Promise<string>((resolve) => {
+        cli.question(query, resolve);
+    });
+};
 
 async function askUser(prompt: string): Promise<string> {
     const answer = await askQuestion(prompt);
@@ -59,18 +62,25 @@ async function modifyEslintConfig(filePath: string): Promise<void> {
         rules: {}
     };
 
-    if (await pathExists(filePath)) {
-        const shortFileName = relative(process.cwd(), filePath);
-        console.error(`WARN: '${shortFileName}' found!`);
+    const files = await readdir(dirname(filePath)).catch((reason) => Promise.reject(reason));
+    const existingConfigFiles = files.filter((filename) =>
+        /\.eslintrc\.(c?js|ya?ml|json)$/.test(filename)
+    );
+
+    if (existingConfigFiles.length > 0) {
+        existingConfigFiles.forEach((filename) => {
+            const shortFileName = relative(process.cwd(), filename);
+            console.error(`WARN: '${shortFileName}' found!`);
+        });
+        if (existingConfigFiles.length > 1) {
+            console.error("Only 1 ESLint Config can be used per directory.");
+        }
         let response = null;
         while (response === null) {
-            let answer = "";
-            try {
-                // eslint-disable-next-line no-await-in-loop
-                answer = await askUser(`Do you want to overwrite ${shortFileName} (Y/n)? `);
-            } catch (e) {
-                return Promise.reject(e);
-            }
+            // eslint-disable-next-line no-await-in-loop
+            const answer = await askUser(`Reset example/.eslintrc (Y/n)? `).catch((e) =>
+                Promise.reject(e)
+            );
             if (/^Y|YES|YEP$/i.test(answer)) {
                 response = true;
             } else if (/^N|NO|NOPE$/i.test(answer)) {
@@ -80,7 +90,8 @@ async function modifyEslintConfig(filePath: string): Promise<void> {
             }
         }
         if (!response) {
-            return Promise.reject(new Error("User prevented ESLint config overwrite."));
+            console.log("[INFO] User chose not to overwrite ESLint config.");
+            return Promise.resolve();
         }
     }
     return writeJSON(filePath, eslintConfig, { spaces: 4 });
