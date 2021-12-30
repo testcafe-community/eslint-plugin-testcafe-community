@@ -33,7 +33,9 @@ update_npm_dependencies() {
       return 1
     fi
 
-    rm "$lockfiles"
+    if ! eval "rm -f $lockfiles"; then
+      error "ERROR: failed to remove old/corrupted lockfiles"
+    fi
 
   elif replay "$changed_files" | grep --quiet "package.json"; then
     log "CHANGE DETECTED: 'package.json'"
