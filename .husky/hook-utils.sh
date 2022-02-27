@@ -1,9 +1,11 @@
 #!/bin/sh
+# Shell utility functions for git-hooks
+# --------------------------------------
 [ -z "$LOG_PREFIX" ] && LOG_PREFIX="[.husky/???]"
 
 # as opposed to echo, interpret C escape sequences properly in all envs
 replay() {
-  printf '%s\n' "$*"
+  printf '%b\n' "$*"
 }
 
 # Print to stdout as messages with a prefix of $LOG_PREFIX
@@ -18,7 +20,7 @@ error() {
 
 # Prints and runs command
 explicit_run_cmd() {
-  cmd="$1"
+  cmd="$*"
   log "$> $cmd"
   eval "$cmd"
 }
@@ -100,14 +102,14 @@ activate_nvm_env() {
   if ! command -v nvm >/dev/null 2>&1; then
     # check bash profile
     if ! NVM_DIR="$(bash -lic 'command -v nvm &>/dev/null && echo "$NVM_DIR"')"; then
-    NVM_DEFAULT_PATH="$HOME/.nvm/nvm.sh"
-    if ! [ -s "$NVM_DEFAULT_PATH" ] || replay "$SHELL" | grep dash; then
-      # Abort [1], nvm not found
-      # Abort [2], dash could fail on sourcing of nvm
-      return 0
-    fi
-    # shellcheck disable=SC2034
-    NVM_DIR="$(dirname "$NVM_DEFAULT_PATH")"
+      NVM_DEFAULT_PATH="$HOME/.nvm/nvm.sh"
+      if ! [ -s "$NVM_DEFAULT_PATH" ] || replay "$SHELL" | grep dash; then
+        # Abort [1], nvm not found
+        # Abort [2], dash could fail on sourcing of nvm
+        return 0
+      fi
+      # shellcheck disable=SC2034
+      NVM_DIR="$(dirname "$NVM_DEFAULT_PATH")"
       unset -v NVM_DEFAULT_PATH
     fi
     # shellcheck disable=SC1090,SC1091,SC2240
