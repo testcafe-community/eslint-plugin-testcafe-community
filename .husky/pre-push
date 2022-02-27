@@ -24,16 +24,18 @@ if ! current_branch="$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')"; then
   exit 1
 fi
 
-if ! tracked_branch="$(git rev-parse --abbrev-ref '@{upstream}')"; then
+if ! tracked_branch="$(git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null)"; then
   # branch is not currently tracking an upstream branch ref
-  if ! [ "$current_branch" = "main" ] && ! [ "$current_branch" = "master" ]; then
+  if ! printf '%s\n' "$current_branch" | grep -qE "^(master|main)$"; then
     env_cleanup && exit 0
   fi
-elif ! [ "$tracked_branch" = "${remote_origin_name}/master" ]; then
+  log "EVENT: Detected a push to ${remote_origin_name}/${current_branch}"
+elif ! printf '%s\n' "$tracked_branch" | grep -qE "^${remote_origin_name}/(master|main)$"; then
   env_cleanup && exit 0
+else
+  log "EVENT: Detected a push to ${tracked_branch}"
 fi
 
-log "EVENT: Detected a push to remote:master"
 log "Running test suite just-in-case, we don't want to break anything!"
 log "This will only take a minute..."
 export npm_config_loglevel=silent
