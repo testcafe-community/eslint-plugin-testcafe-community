@@ -207,6 +207,9 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
                 "npm",
                 "install",
                 `eslint@^${eslintVersion}`, // force eslint version
+                ...(coerce(major(eslintVersion))!.version.startsWith("7")
+                    ? [`@typescript-eslint/eslint-plugin@^6`]
+                    : []),
                 pkgTarball, // install production version of plugin
                 "--prefer-offline",
                 "--no-save" // prevent package.json modification
