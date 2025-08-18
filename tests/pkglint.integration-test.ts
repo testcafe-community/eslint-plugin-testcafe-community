@@ -8,6 +8,7 @@ import { exec, ExecException, execSync } from "child_process";
 import { resolve } from "path";
 import { copy, ensureSymlink, remove, writeJSON } from "fs-extra";
 import type { Linter, ESLint } from "eslint";
+import { glob } from "glob";
 import { coerce, major, minVersion, prerelease, satisfies, validRange } from "semver";
 import thisModule from "../package.json";
 
@@ -199,7 +200,10 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
             console.log(error.stdout);
             throw error;
         });
-        const pkgTarball = result.stdout.trim() || "";
+
+        const pkgTarball = (await glob("*.tgz", { cwd: examplePkg })).find((tarball) => {
+            return result.stdout.includes(tarball);
+        });
 
         // Run install for example package
         await execProcess(
