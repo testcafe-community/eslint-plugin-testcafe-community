@@ -4,7 +4,7 @@
  * @author codejedi365
  */
 
-import type { CallExpression } from "@typescript-eslint/types/dist/ast-spec";
+import type { CallExpression } from "@typescript-eslint/types/dist/generated/ast-spec";
 import {
     TSESLint,
     AST_NODE_TYPES
@@ -73,7 +73,7 @@ describe("ESLint Code Snippets", () => {
             })("my test", async t => {
                 await t.click().expect(true).ok();
             });
-    
+
             test.before(async t => {
                 await t.wait(1000);
             })("my other test", async t => {
@@ -82,7 +82,7 @@ describe("ESLint Code Snippets", () => {
             `,
             `
             fixture("My App").meta("ID", "F01").page("http://example.com")
-    
+
             test("My App", async () => {
                 await t.expect(true).eql(true, "error msg");
             });
@@ -167,7 +167,7 @@ describe("ESLint Code Snippets", () => {
                     test.before(async t => {
                         await t.wait(1000);
                     })("my test", async t => {});
-                    
+
                     test.before(async t => {
                         await t.wait(1000);
                     })("my test", async t => {});

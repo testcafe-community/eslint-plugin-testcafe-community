@@ -6,7 +6,7 @@
 import type {
     CallExpression,
     BaseNode
-} from "@typescript-eslint/types/dist/ast-spec";
+} from "@typescript-eslint/types/dist/generated/ast-spec";
 import { determineCodeLocation, isAncestorOf } from "../utils/locator";
 import { createRule } from "../create-rule";
 

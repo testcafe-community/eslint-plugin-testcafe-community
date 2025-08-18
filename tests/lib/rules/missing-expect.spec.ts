@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
-import type { CallExpression } from "@typescript-eslint/types/dist/ast-spec";
+import type { CallExpression } from "@typescript-eslint/types/dist/generated/ast-spec";
 import {
     TSESLint,
     AST_NODE_TYPES
@@ -134,12 +134,12 @@ describe("ESLint Code Snippets", () => {
                 // Missing one expect across 2 tests
                 code: `fixture("My Fixture")
                     .page("https://example.com");
-    
+
                 test("test1", async t => {
                     await t.useRole(adminRole).wait(500);
                     await t.expect(foo).eql(bar);
                 });
-    
+
                 test("test2", async t => {
                     await t.click(button);
                 });`,

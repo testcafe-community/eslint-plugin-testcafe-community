@@ -5,7 +5,7 @@
 import type {
     CallExpression,
     MemberExpression
-} from "@typescript-eslint/types/dist/ast-spec";
+} from "@typescript-eslint/types/dist/generated/ast-spec";
 import { createRule } from "../create-rule";
 
 //------------------------------------------------------------------------------

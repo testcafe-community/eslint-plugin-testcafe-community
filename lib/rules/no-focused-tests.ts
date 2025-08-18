@@ -3,7 +3,7 @@
  * @author Ben Monro
  */
 
-import type { MemberExpression } from "@typescript-eslint/types/dist/ast-spec";
+import type { MemberExpression } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { createRule } from "../create-rule";
 
 //------------------------------------------------------------------------------
