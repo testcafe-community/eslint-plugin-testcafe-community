@@ -3,13 +3,15 @@
  * @author codejedi365
  */
 /* eslint prettier/prettier: ["error", { printWidth: 100 }] */
-import { promisify } from "util";
-import { exec, ExecException, execSync } from "child_process";
-import { resolve } from "path";
-import { copy, ensureSymlink, remove, writeJSON } from "fs-extra";
 import type { Linter, ESLint } from "eslint";
+import { writeFile } from "node:fs/promises";
+import { promisify } from "node:util";
+import { exec, ExecException, execSync } from "node:child_process";
+import { resolve } from "node:path";
+import { copy, ensureSymlink, remove, writeJSON } from "fs-extra";
 import { glob } from "glob";
 import { coerce, major, minVersion, prerelease, satisfies, validRange } from "semver";
+import { migrateConfig } from "@eslint/migrate-config/src/migrate-config";
 import thisModule from "../package.json";
 
 const SECOND = 1000;
@@ -91,8 +93,35 @@ async function modifyEslintConfig(
     await writeJSON(filePath, eslintConfig, { spaces: 4 });
 }
 
+async function modifyEslintConfigJS(
+    filePath: string,
+    overrides: Partial<Linter.Config>
+): Promise<void> {
+    // Deep copy of base config
+    const eslintConfig = JSON.parse(JSON.stringify(baseLintConfig)) as Linter.Config;
+
+    // Append new override
+    eslintConfig.overrides = [
+        ...(eslintConfig.overrides || []),
+        {
+            ...baseLintConfigOverride,
+            ...overrides
+        }
+    ];
+
+    // Convert JSON config to v9 JS config style
+    const result = migrateConfig(eslintConfig, { sourceType: "module" });
+
+    // Write the result to the file
+    await writeFile(filePath, result.code);
+}
+
 async function restoreConfigurationFile(targetFile: string) {
     await modifyEslintConfig(targetFile, {});
+}
+
+async function restoreConfigurationFileJS(targetFile: string) {
+    await modifyEslintConfigJS(targetFile, {});
 }
 
 async function runLintOnProject(
@@ -102,7 +131,13 @@ async function runLintOnProject(
     autofix = false
 ): Promise<ESLint.LintResult[]> {
     // SETUP: ensure eslint config is set to recommended
-    await modifyEslintConfig(resolve(projPath, configFilename), configOverrides);
+    if (configFilename === ".eslintrc.json") {
+        await modifyEslintConfig(resolve(projPath, configFilename), configOverrides);
+    } else if (configFilename === "eslint.config.js") {
+        await modifyEslintConfigJS(resolve(projPath, configFilename), configOverrides);
+    } else {
+        throw new Error(`Unsupported config file: ${configFilename}`);
+    }
     // EXECUTE ESLINT via CLI to get results
     const cmd = ["npx", "eslint", ".", "--format", "json", autofix ? "--fix" : ""].join(" ");
 
@@ -175,6 +210,7 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
     const testPkgPath = resolve(__dirname, "__cache__", "example");
     const tsTestFile = resolve(testPkgPath, "example.test.ts");
     const jsTestFile = resolve(testPkgPath, "example.test.js");
+    const majorVersion = Number.parseInt(coerce(major(eslintVersion))!.version.split(".")[0], 10);
 
     beforeAll(async function buildAndInstallPkg() {
         if (!process.env.CI) {
@@ -206,27 +242,25 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
         });
 
         // Run install for example package
-        await execProcess(
-            [
-                "npm",
-                "install",
-                `eslint@^${eslintVersion}`, // force eslint version
-                ...(coerce(major(eslintVersion))!.version.startsWith("7")
-                    ? [`@typescript-eslint/eslint-plugin@^6`]
-                    : []),
-                pkgTarball, // install production version of plugin
-                "--prefer-offline",
-                "--no-save" // prevent package.json modification
-            ].join(" "),
-            {
-                cwd: examplePkg
+        const installCmd = [
+            "npm",
+            "install",
+            `eslint@^${eslintVersion}`, // force eslint version
+            ...(majorVersion === 7 ? ["@typescript-eslint/eslint-plugin@^6"] : []),
+            ...(majorVersion === 9 ? ["globals@^16", "@eslint/js@^9", "@eslint/eslintrc@^3"] : []),
+            pkgTarball, // install production version of plugin
+            "--prefer-offline",
+            "--no-save" // prevent package.json modification
+        ].join(" ");
+
+        await execProcess(installCmd, { cwd: examplePkg }).catch(
+            (error: Error & { stdout: string; stderr: string }) => {
+                console.error("Error occurred during 'npm install'");
+                console.error(error.stderr);
+                console.log(error.stdout);
+                throw error;
             }
-        ).catch((error: Error & { stdout: string; stderr: string }) => {
-            console.error("Error occured during 'npm install'");
-            console.error(error.stderr);
-            console.log(error.stdout);
-            throw error;
-        });
+        );
 
         // Create a copy of example package
         await restoreTestPkg(examplePkg, testPkgPath);
@@ -234,19 +268,27 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
 
     afterAll(async () => {
         await remove(testPkgPath);
+        await remove(resolve(examplePkg, "node_modules"));
+        const tarballs = await glob("*.tgz", { cwd: examplePkg });
+        await Promise.all(tarballs.map((tarball) => remove(resolve(examplePkg, tarball))));
     });
 
     describe("/recommended", () => {
         let lintResults: ESLint.LintResult[] = [];
 
         beforeAll(async () => {
-            lintResults = await runLintOnProject(testPkgPath, ".eslintrc.json", {
+            const configFile = majorVersion < 9 ? ".eslintrc.json" : "eslint.config.js";
+            lintResults = await runLintOnProject(testPkgPath, configFile, {
                 extends: ["plugin:testcafe-community/recommended"]
             });
         }, EXAMPLE_PROJECT_LINT_EVAL_TIMEOUT);
 
         afterAll(async () => {
-            await restoreConfigurationFile(resolve(testPkgPath, ".eslintrc.json"));
+            if (majorVersion < 9) {
+                await restoreConfigurationFile(resolve(testPkgPath, ".eslintrc.json"));
+            } else {
+                await restoreConfigurationFileJS(resolve(testPkgPath, "eslint.config.js"));
+            }
         });
 
         describe("TS", () => {
@@ -290,7 +332,8 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
         let lintResults: ESLint.LintResult[] = [];
 
         beforeAll(async () => {
-            lintResults = await runLintOnProject(testPkgPath, ".eslintrc.json", {
+            const configFile = majorVersion < 9 ? ".eslintrc.json" : "eslint.config.js";
+            lintResults = await runLintOnProject(testPkgPath, configFile, {
                 // TODO: implement all configuration
                 // extends: ["plugin:testcafe-community/all"],
                 extends: ["plugin:testcafe-community/recommended"]
@@ -298,7 +341,11 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
         }, EXAMPLE_PROJECT_LINT_EVAL_TIMEOUT);
 
         afterAll(async () => {
-            await restoreConfigurationFile(resolve(testPkgPath, ".eslintrc.json"));
+            if (majorVersion < 9) {
+                await restoreConfigurationFile(resolve(testPkgPath, ".eslintrc.json"));
+            } else {
+                await restoreConfigurationFileJS(resolve(testPkgPath, "eslint.config.js"));
+            }
         });
 
         describe("TS", () => {
@@ -596,9 +643,10 @@ describe.each(getEslintPeerLibraries())("eslint@^%s compatibility", (eslintVersi
 
             beforeAll(async () => {
                 const autofix = true;
+                const configFile = majorVersion < 9 ? ".eslintrc.json" : "eslint.config.js";
                 postFixLintResults = await runLintOnProject(
                     testPkgPath,
-                    ".eslintrc.json",
+                    configFile,
                     {
                         // TODO: implement all configuration
                         // extends: ["plugin:testcafe-community/all"],
