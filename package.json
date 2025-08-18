@@ -109,6 +109,17 @@
             "path": "@commitlint/cz-commitlint"
         }
     },
+    "overrides": {
+        "jest-snapshot": {
+            "@types/babel__traverse": "<=7.20.1"
+        },
+        "@types/babel__core": {
+            "@types/babel__traverse": "<=7.20.1"
+        },
+        "babel-plugin-jest-hoist": {
+            "@types/babel__traverse": "<=7.20.1"
+        }
+    },
     "engines": {
         "node": ">=10.24"
     }
