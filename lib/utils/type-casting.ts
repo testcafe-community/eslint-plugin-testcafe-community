@@ -9,7 +9,7 @@ import type {
     Identifier,
     BaseNode,
     Literal
-} from "@typescript-eslint/types/dist/ast-spec";
+} from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES } from "@typescript-eslint/experimental-utils";
 
 /**

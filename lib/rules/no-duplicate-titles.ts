@@ -8,7 +8,7 @@ import type {
     CallExpression,
     CallExpressionArgument,
     Literal
-} from "@typescript-eslint/types/dist/ast-spec";
+} from "@typescript-eslint/types/dist/generated/ast-spec";
 import { determineCodeLocation } from "../utils/locator";
 import { isLiteral } from "../utils/type-casting";
 import { createRule } from "../create-rule";
