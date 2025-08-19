@@ -1,0 +1,24 @@
+name: CI (Manual)
+
+on:
+  # Enable execution directly from Actions page
+  workflow_dispatch:
+
+# default token permissions = none
+permissions: {}
+
+jobs:
+
+  validate:
+    uses: ./.github/workflows/validate.yml
+    with:
+      # There is no way to check for file changes on a manual workflow so
+      # we just assume everything has changed
+      build-files-changed: true
+      ci-files-changed: true
+      doc-files-changed: true
+      src-files-changed: true
+      test-files-changed: true
+      files-changed: true
+    permissions: {}
+    secrets: {}

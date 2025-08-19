@@ -1,0 +1,21 @@
+---
+
+build:
+    - tsconfig.json
+    - package.json
+    - scripts/**
+    - webpack.config.js
+docs:
+    - docs/**
+    - LICENSE
+    - README.md
+    - CONTRIBUTING.md
+src:
+    - lib/**
+    - package.json
+tests:
+    - jest.config.js
+    - tsconfig.jest.json
+    - tsconfig.json
+    - tests/**
+    - example/**

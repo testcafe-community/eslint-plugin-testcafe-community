@@ -1,0 +1,188 @@
+---
+name: Validation Pipeline
+
+on:
+  # Enable workflow as callable from another workflow
+  workflow_call:
+    inputs:
+      files-changed:
+        description: 'Boolean string result for if any files have changed'
+        type: string
+        required: false
+        default: 'false'
+      build-files-changed:
+        description: 'Boolean string result for if build files have changed'
+        type: string
+        required: false
+        default: 'false'
+      ci-files-changed:
+        description: 'Boolean string result for if CI files have changed'
+        type: string
+        required: false
+        default: 'false'
+      doc-files-changed:
+        description: 'Boolean string result for if documentation files have changed'
+        type: string
+        required: false
+        default: 'false'
+      src-files-changed:
+        description: 'Boolean string result for if source files have changed'
+        type: string
+        required: false
+        default: 'false'
+      test-files-changed:
+        description: 'Boolean string result for if test files have changed'
+        type: string
+        required: false
+        default: 'false'
+    # secrets: none required ATT
+
+
+# set default Token permissions = none
+permissions: {}
+
+
+env:
+  BASE_NODE_VERSION: 20.x
+
+
+jobs:
+
+  lint:
+    name: Code Quality
+    if: ${{ inputs.files-changed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Git Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+
+      - name: Setup | Use Node.js ${{ env.BASE_NODE_VERSION }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: ${{ env.BASE_NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup | Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Evaluate | Run Lint script
+        run: npm run lint
+
+
+  lint-scripts:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Git Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+
+      - name: Setup | Install ShellCheck
+        run: sudo apt update && sudo apt install shellcheck=0.9.0-1
+
+      - name: Setup | simulate husky install
+        # husky does not install when in CI env
+        # but file is needed so shellcheck does not throw errors for missing file
+        run: mkdir -p .husky/_ && touch .husky/_/husky.sh
+
+      - name: Evaluate | Shellcheck
+        run: shellcheck -x
+              .devcontainer/*.sh
+              .husky/commit-msg
+              .husky/hook-utils.sh
+              .husky/post-checkout
+              .husky/post-merge
+              .husky/post-rewrite
+              .husky/pre-commit
+              .husky/pre-push
+              .husky/prepare-commit-msg
+
+      # - name: shell format
+      #   run: shfmt
+
+
+  lint-commits:
+    name: Semantic commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Git Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Setup | Use Node.js ${{ env.BASE_NODE_VERSION }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: ${{ env.BASE_NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup | Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Evaluate | Run commit-lint
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+        env:
+          BASE_COMMIT_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          NEWEST_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.event.after }}
+        run: npx commitlint --verbose
+             --from "$BASE_COMMIT_SHA"
+             --to "$NEWEST_COMMIT_SHA"
+
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Git Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+
+      - name: Setup | Use Node.js ${{ env.BASE_NODE_VERSION }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: ${{ env.BASE_NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup | Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Build | Run build
+        run: npm run build --if-present
+
+      - name: Test | Run unit-tests
+        run: npm run test:unit
+
+      - name: Save | Upload bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: dist-bundle
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 1
+
+
+  integration:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x, 24.x]
+    steps:
+      - name: Setup | Git Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
+
+      - name: Setup | Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Setup | Download bundle
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0  # v5.0.0
+        with:
+          name: dist-bundle
+          path: dist/
+
+      - name: Setup | Install dependencies
+        run: npm ci --prefer-offline --no-fund --no-audit
+
+      - name: Test | Run plugin tests
+        run: npm run test:plugin
