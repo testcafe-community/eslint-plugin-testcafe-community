@@ -1,10 +1,3 @@
----
-name: Pull Request
-title: "[feat | fix](scope): (short-title)"
-labels: "needs review"
-assignees: "codejedi365"
----
-
 <!--
 Thank you for providing a solution to make this project better!
 Please fill in as much of the template below as you’re able.
