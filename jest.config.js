@@ -36,7 +36,13 @@ module.exports = {
             ...tsJestPresets,
             runner: "@codejedi365/jest-serial-runner",
             setupFilesAfterEnv: ["jest-extended/all"],
-            testMatch: ["<rootDir>/tests/**/*.integration-test.ts"]
+            testMatch: ["<rootDir>/tests/**/*.integration-test.ts"],
+            transform: {
+                "^.+\\.js$": "babel-jest"
+            },
+            transformIgnorePatterns: [
+                "/node_modules/(?!(?:@eslint/|camelcase/index\\.js))"
+            ]
         },
         {
             displayName: "DOCUMENTATION",
