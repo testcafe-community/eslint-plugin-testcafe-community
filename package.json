@@ -47,8 +47,8 @@
         "setup": "run-s --silent setup:*",
         "setup:expkg": "ts-node -O '{\"module\":\"commonjs\"}' scripts/setup-example-pkg.ts",
         "prepare": "is-ci || husky install",
-        "prepack": "run-s build && mv dist/package.json .",
-        "postpack": "git -c core.hookspath=/dev/null checkout -- package.json",
+        "prepack": "run-s build && git stash -q -- package.json && mv dist/package.json .",
+        "postpack": "git stash show || echo '' | grep -q 'package.json' && git -c core.hookspath=/dev/null checkout -q -- package.json && git stash pop --quiet || (exit 0)",
         "watch": "npm run test:unit -- --watch --"
     },
     "devDependencies": {
