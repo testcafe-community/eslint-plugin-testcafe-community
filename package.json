@@ -47,7 +47,8 @@
         "setup": "run-s --silent setup:*",
         "setup:expkg": "ts-node -O '{\"module\":\"commonjs\"}' scripts/setup-example-pkg.ts",
         "prepare": "is-ci || husky install",
-        "prepublishOnly": "is-ci && run-s build",
+        "prepack": "run-s build && mv dist/package.json .",
+        "postpack": "git -c core.hookspath=/dev/null checkout -- package.json",
         "watch": "npm run test:unit -- --watch --"
     },
     "devDependencies": {
@@ -75,6 +76,7 @@
         "eslint-plugin-prettier": "4.0.0",
         "filemanager-webpack-plugin": "6.1.7",
         "fs-extra": "10.0.0",
+        "generate-json-webpack-plugin": "^2.0.0",
         "glob": "^11.0.3",
         "husky": "7.0.4",
         "is-ci": "3.0.1",

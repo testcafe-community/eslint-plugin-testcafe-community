@@ -7,6 +7,7 @@ const { resolve, dirname, basename } = require("path");
 const { Z_DEFAULT_COMPRESSION, Z_BEST_SPEED } = require("constants");
 const nodeExternals = require("webpack-node-externals");
 const FileManagerPlugin = require("filemanager-webpack-plugin");
+const GenerateJsonPlugin = require("generate-json-webpack-plugin");
 const thisModule = require("./package.json");
 
 // CONSTANTS
@@ -27,6 +28,66 @@ const outDir = (() => {
     return dir;
 })();
 
+function sanitizePackageJson(pkg) {
+    const keys2Keep = [
+        "name",
+        "version",
+        "description",
+        "bin",
+        "main",
+        "types",
+        "files",
+        "repository",
+        "author",
+        "contributors",
+        "license",
+        "bugs",
+        "homepage",
+        "keywords",
+        "module",
+        "os",
+        "cpu",
+        "engines",
+        "dependencies",
+        // "bundleDependencies", // TODO: how does this work?
+        "peerDependencies",
+        "peerDependenciesMeta",
+        "optionalDependencies",
+        "overrides",
+        "publishConfig"
+    ];
+
+    const clone = JSON.parse(
+        JSON.stringify(pkg, (key, value) => {
+            // Always keep the root object
+            if (key === "") return value;
+
+            // Remove null or empty object values
+            if (
+                value === null ||
+                (typeof value === "object" && Object.keys(value).length === 0)
+            ) {
+                return undefined;
+            }
+
+            // Otherwise, keep the value
+            return value;
+        })
+    );
+
+    // Remove any keys that are not in the keys2Keep array
+    Object.keys(clone)
+        .filter((key) => !keys2Keep.includes(key))
+        .forEach((key) => {
+            delete clone[key];
+        });
+
+    // For this project specifically, there are no overrides required for this package at runtime
+    delete clone.overrides;
+
+    return clone;
+}
+
 /**
  * Dynamic configuration function
  * @param env webpack environment object
@@ -44,6 +105,12 @@ function buildConfig() {
             }
         },
         plugins: [
+            new GenerateJsonPlugin(
+                "package.json",
+                sanitizePackageJson(thisModule),
+                null,
+                4
+            ),
             new FileManagerPlugin({
                 runOnceInWatchMode: true,
                 events: {
