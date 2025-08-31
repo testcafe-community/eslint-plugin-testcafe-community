@@ -1,23 +1,30 @@
 ---
-name: CI/CD
+name: CI
 
 on:
-  push:
-    branches: [ master, next ]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: # Target branches
+      - master
+      - next
 
 
 # default token permissions = none
 permissions: {}
 
 
-env:
-  BASE_NODE_VERSION: 20.x
+# If a new push is made to the branch, cancel the previous run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 
 jobs:
 
   eval-changes:
     name: Evaluate changes
+    # condition: Execute IFF it is protected branch update, or a PR that is NOT in a draft state
+    if: ${{ github.event_name != 'pull_request' || !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
 
     steps:
@@ -38,7 +45,7 @@ jobs:
         with:
           files_yaml: |
             ci:
-              - .github/workflows/cicd.yml
+              - .github/workflows/ci.yml
               - .github/workflows/validate.yml
 
       - name: Evaluate | Detect if any of the combinations of file sets have changed
@@ -66,9 +73,6 @@ jobs:
   validate:
     needs: eval-changes
     uses: ./.github/workflows/validate.yml
-    concurrency:
-      group: ${{ github.workflow }}-validate-${{ github.ref_name }}
-      cancel-in-progress: true
     with:
       files-changed: ${{ needs.eval-changes.outputs.any-file-changes }}
       build-files-changed: ${{ needs.eval-changes.outputs.build-changes }}
@@ -78,36 +82,3 @@ jobs:
       test-files-changed: ${{ needs.eval-changes.outputs.test-changes }}
     permissions: {}
     secrets: {}
-
-
-  release:
-    needs: validate
-    runs-on: ubuntu-latest
-
-    concurrency:
-      group: ${{ github.workflow }}-release-${{ github.ref_name }}
-      cancel-in-progress: false
-
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-
-    steps:
-      - name: Setup | Git Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
-
-      - name: Setup | Use Node.js ${{ env.BASE_NODE_VERSION }}
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
-        with:
-          node-version: ${{ env.BASE_NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Setup | Install dependencies
-        run: npm ci --prefer-offline --no-fund --no-audit
-
-      - name: Release | Run semantic-release
-        run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
